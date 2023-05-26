@@ -20,7 +20,10 @@ public class DataBase {
         statement.setQueryTimeout(30);  // set timeout to 30 sec.
 
         //statement.executeUpdate("create table catalog (id INTEGER PRIMARY KEY AUTOINCREMENT, title string, extract string, source integer)");
-        statement.executeUpdate("create table catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+        statement.executeUpdate("create table if not exists catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+
+        statement.executeUpdate("create table if not exists history (id INTEGER, searchTerm string ,title string, extract string, source integer)");
+
         //If the DB was created before, a SQL error is reported but it is not harmfull...
       }
 

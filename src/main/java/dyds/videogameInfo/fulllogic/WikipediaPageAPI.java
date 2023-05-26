@@ -10,4 +10,7 @@ public interface WikipediaPageAPI {
   @GET("api.php?format=json&action=query&prop=extracts&exlimit=1&explaintext=1&exintro=1")
   Call<String> getExtractByPageID(@Query("pageids") String term);
 
+  @GET("api.php?format=json&action=query&prop=pageprops|revisions")
+  Call<String> get2(@Query("pageids") String term);
+
 }

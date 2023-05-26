@@ -18,16 +18,18 @@ import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class MainWindow {
-  private JTextField textField1;
-  private JButton goButton;
-  private JPanel contentPane;
-  private JTextPane textPane1;
-  private JButton saveLocallyButton;
+  private JTextField textFieldSearchTerm;
+  private JButton buttonSearch;
+  public JPanel contentPane;
+  private JTextPane textPaneResult;
+  private JButton buttonSaveLocally;
   private JTabbedPane tabbedPane1;
   private JPanel searchPanel;
   private JPanel storagePanel;
-  private JComboBox comboBox1;
-  private JTextPane textPane2;
+  private JComboBox comboBoxStored;
+  private JTextPane textPaneStored;
+  private JComboBox comboBoxHistory;
+  private JPanel historyPanel;
 
   DefaultComboBoxModel<String> comboBoxModel = new DefaultComboBoxModel<>();
   String selectedResultTitle = null; //For storage purposes, se below that it may not coincide with the searched term
@@ -43,16 +45,15 @@ public class MainWindow {
     WikipediaSearchAPI searchAPI = retrofit.create(WikipediaSearchAPI.class);
     WikipediaPageAPI pageAPI = retrofit.create(WikipediaPageAPI.class);
 
-    comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+    comboBoxStored.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
 
-
-    textPane1.setContentType("text/html");
-    textPane2.setContentType("text/html");
+    textPaneResult.setContentType("text/html");
+    textPaneStored.setContentType("text/html");
     // this is needed to open a link in the browser
 
-    textField1.addActionListener(actionEvent -> {System.out.println("ACCION!!!");});
+    textFieldSearchTerm.addActionListener(actionEvent -> {System.out.println("ACCION!!!");});
     System.out.println("TYPED!!!");
-    textField1.addPropertyChangeListener(propertyChangeEvent -> {
+    textFieldSearchTerm.addPropertyChangeListener(propertyChangeEvent -> {
               System.out.println("TYPED!!!");
     });
 
@@ -60,7 +61,7 @@ public class MainWindow {
     // Don't panic! We added several helpful comments to guide you through it ;)
 
     // From here on is where the magic happends: querying wikipedia, showing results, etc.
-    goButton.addActionListener(e -> new Thread(() -> {
+    buttonSearch.addActionListener(e -> new Thread(() -> {
               //This may take some time, dear user be patient in the meanwhile!
               setWorkingStatus();
               // get from service
@@ -68,7 +69,7 @@ public class MainWindow {
               try {
 
                 //ToGustavo: First, lets search for the term in Wikipedia
-                callForSearchResponse = searchAPI.searchForTerm(textField1.getText() + " articletopic:\"video-games\"").execute();
+                callForSearchResponse = searchAPI.searchForTerm(textFieldSearchTerm.getText() + " articletopic:\"video-games\"").execute();
 
                 //Show the result for testing reasons, if it works, dont forget to delete!
                 System.out.println("JSON " + callForSearchResponse.body());
@@ -99,7 +100,7 @@ public class MainWindow {
                       setWorkingStatus();
                       Response<String> callForPageResponse = pageAPI.getExtractByPageID(sr.pageID).execute();
 
-                      System.out.println("JSON " + callForPageResponse.body());
+                      System.out.println("JSON despued de seleccionar" + callForPageResponse.body());
 
                       //ToGustavo: This is similar to the code above, but here we parse the wikipage answer.
                       JsonObject jobj2 = gson.fromJson(callForPageResponse.body(), JsonObject.class);
@@ -120,8 +121,8 @@ public class MainWindow {
                         //Not yet...
                         //text+="\n" + "<a href=https://en.wikipedia.org/?curid=" + searchResultPageId +">View Full Article</a>";
                       }
-                      textPane1.setText(text);
-                      textPane1.setCaretPosition(0);
+                      textPaneResult.setText(text);
+                      textPaneResult.setCaretPosition(0);
                       //Back to edit time!
                       setWatingStatus();
                     } catch (Exception e12) {
@@ -129,7 +130,7 @@ public class MainWindow {
                     }
                   });
                 }
-                searchOptionsMenu.show(textField1, textField1.getX(), textField1.getY());
+                searchOptionsMenu.show(textFieldSearchTerm, textFieldSearchTerm.getX(), textFieldSearchTerm.getY());
               } catch (IOException e1) {
                 e1.printStackTrace();
               }
@@ -138,24 +139,24 @@ public class MainWindow {
               setWatingStatus();
     }).start());
 
-    saveLocallyButton.addActionListener(actionEvent -> {
+    buttonSaveLocally.addActionListener(actionEvent -> {
       if(text != ""){
         // save to DB  <o/
         DataBase.saveInfo(selectedResultTitle.replace("'", "`"), text);  //Dont forget the ' sql problem
-        comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+        comboBoxStored.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
       }
     });
 
-    comboBox1.addActionListener(actionEvent -> textPane2.setText(textToHtml(DataBase.getExtract(comboBox1.getSelectedItem().toString()))));
+    comboBoxStored.addActionListener(actionEvent -> textPaneStored.setText(textToHtml(DataBase.getExtract(comboBoxStored.getSelectedItem().toString()))));
 
     JPopupMenu storedInfoPopup = new JPopupMenu();
 
     JMenuItem deleteItem = new JMenuItem("Delete!");
     deleteItem.addActionListener(actionEvent -> {
-        if(comboBox1.getSelectedIndex() > -1){
-          DataBase.deleteEntry(comboBox1.getSelectedItem().toString());
-          comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
-          textPane2.setText("");
+        if(comboBoxStored.getSelectedIndex() > -1){
+          DataBase.deleteEntry(comboBoxStored.getSelectedItem().toString());
+          comboBoxStored.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+          textPaneStored.setText("");
         }
     });
     storedInfoPopup.add(deleteItem);
@@ -163,27 +164,15 @@ public class MainWindow {
     JMenuItem saveItem = new JMenuItem("Save Changes!");
     saveItem.addActionListener(actionEvent -> {
         // save to DB  <o/
-        DataBase.saveInfo(comboBox1.getSelectedItem().toString().replace("'", "`"), textPane2.getText());  //Dont forget the ' sql problem
+        DataBase.saveInfo(comboBoxStored.getSelectedItem().toString().replace("'", "`"), textPaneStored.getText());  //Dont forget the ' sql problem
         //comboBox1.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
     });
     storedInfoPopup.add(saveItem);
 
-    textPane2.setComponentPopupMenu(storedInfoPopup);
+    textPaneStored.setComponentPopupMenu(storedInfoPopup);
 
 
   }
-
-
-  private void setWorkingStatus() {
-    for(Component c: this.searchPanel.getComponents()) c.setEnabled(false);
-    textPane1.setEnabled(false);
-  }
-
-  private void setWatingStatus() {
-    for(Component c: this.searchPanel.getComponents()) c.setEnabled(true);
-    textPane1.setEnabled(true);
-  }
-
   public static void main(String[] args) {
 
     JFrame frame = new JFrame("Video Game Info");
@@ -199,6 +188,17 @@ public class MainWindow {
     System.out.println(DataBase.getExtract("test"));
     System.out.println(DataBase.getExtract("nada"));
   }
+
+  private void setWorkingStatus() {
+    for(Component c: this.searchPanel.getComponents()) c.setEnabled(false);
+    textPaneResult.setEnabled(false);
+  }
+
+  private void setWatingStatus() {
+    for(Component c: this.searchPanel.getComponents()) c.setEnabled(true);
+    textPaneResult.setEnabled(true);
+  }
+
 
   public static String textToHtml(String text) {
 
