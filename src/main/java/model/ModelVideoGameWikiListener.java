@@ -9,4 +9,8 @@ public interface ModelVideoGameWikiListener {
     void searchForStoredFinished();
 
     void deleteFinished();
+
+    void updateHasFinished();
+
+    void historySaveHasFinished();
 }

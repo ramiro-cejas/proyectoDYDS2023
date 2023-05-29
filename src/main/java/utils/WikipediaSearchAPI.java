@@ -1,4 +1,4 @@
-package dyds.videogameInfo.fulllogic;
+package utils;
 
 
 import retrofit2.Call;

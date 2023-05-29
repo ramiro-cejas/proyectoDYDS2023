@@ -1,12 +1,13 @@
-package dyds.videogameInfo.fulllogic;
+package utils;
 
 import java.sql.*;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Date;
 
 public class DataBase {
 
   public static void loadDatabase() {
-    //If the database doesnt exists we create it
     String url = "jdbc:sqlite:./dictionary.db";
 
     try (Connection connection = DriverManager.getConnection(url)) {
@@ -14,17 +15,14 @@ public class DataBase {
 
         DatabaseMetaData meta = connection.getMetaData();
         System.out.println("The driver name is " + meta.getDriverName());
-        //System.out.println("A new database has been created.");
 
         Statement statement = connection.createStatement();
-        statement.setQueryTimeout(30);  // set timeout to 30 sec.
+        statement.setQueryTimeout(30);
 
-        //statement.executeUpdate("create table catalog (id INTEGER PRIMARY KEY AUTOINCREMENT, title string, extract string, source integer)");
         statement.executeUpdate("create table if not exists catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
 
-        statement.executeUpdate("create table if not exists history (id INTEGER, searchTerm string ,title string, extract string, source integer)");
+        statement.executeUpdate("create table if not exists history (id INTEGER, searchTerm string ,title string, date timestamp)");
 
-        //If the DB was created before, a SQL error is reported but it is not harmfull...
       }
 
     } catch (SQLException e) {
@@ -38,19 +36,13 @@ public class DataBase {
     Connection connection = null;
     try
     {
-      // create a database connection
       connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
       Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+      statement.setQueryTimeout(30);
 
-      //statement.executeUpdate("drop table if exists person");
-      //statement.executeUpdate("create table person (id integer, name string)");
-      //statement.executeUpdate("insert into person values(1, 'leo')");
-      //statement.executeUpdate("insert into person values(2, 'yui')");
       ResultSet rs = statement.executeQuery("select * from catalog");
       while(rs.next())
       {
-        // read the result set
         System.out.println("id = " + rs.getInt("id"));
         System.out.println("title = " + rs.getString("title"));
         System.out.println("extract = " + rs.getString("extract"));
@@ -60,8 +52,6 @@ public class DataBase {
     }
     catch(SQLException e)
     {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
       System.err.println(e.getMessage());
     }
     finally
@@ -73,7 +63,6 @@ public class DataBase {
       }
       catch(SQLException e)
       {
-        // connection close failed.
         System.err.println(e);
       }
     }
@@ -85,18 +74,15 @@ public class DataBase {
     Connection connection = null;
     try
     {
-      // create a database connection
       connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
       Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+      statement.setQueryTimeout(30);
 
       ResultSet rs = statement.executeQuery("select * from catalog");
       while(rs.next()) titles.add(rs.getString("title"));
     }
     catch(SQLException e)
     {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
       System.err.println(e.getMessage());
     }
     finally
@@ -108,7 +94,6 @@ public class DataBase {
       }
       catch(SQLException e)
       {
-        // connection close failed.
         System.err.println(e);
       }
       return titles;
@@ -120,11 +105,10 @@ public class DataBase {
     Connection connection = null;
     try
     {
-      // create a database connection
       connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
 
       Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+      statement.setQueryTimeout(30);
 
       System.out.println("INSERT  " + title + "', '"+ extract);
 
@@ -143,7 +127,6 @@ public class DataBase {
       }
       catch(SQLException e)
       {
-        // connection close failed.
         System.err.println( e);
       }
     }
@@ -155,10 +138,9 @@ public class DataBase {
     Connection connection = null;
     try
     {
-      // create a database connection
       connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
       Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+      statement.setQueryTimeout(30);
 
       ResultSet rs = statement.executeQuery("select * from catalog WHERE title = '" + title + "'" );
       rs.next();
@@ -166,8 +148,6 @@ public class DataBase {
     }
     catch(SQLException e)
     {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
       System.err.println("Get title error " + e.getMessage());
     }
     finally
@@ -179,7 +159,6 @@ public class DataBase {
       }
       catch(SQLException e)
       {
-        // connection close failed.
         System.err.println(e);
       }
     }
@@ -192,18 +171,15 @@ public class DataBase {
     Connection connection = null;
     try
     {
-      // create a database connection
       connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
       Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);  // set timeout to 30 sec.
+      statement.setQueryTimeout(30);
 
       statement.executeUpdate("DELETE FROM catalog WHERE title = '" + title + "'" );
 
     }
     catch(SQLException e)
     {
-      // if the error message is "out of memory",
-      // it probably means no database file is found
       System.err.println("Get title error " + e.getMessage());
     }
     finally
@@ -215,11 +191,82 @@ public class DataBase {
       }
       catch(SQLException e)
       {
-        // connection close failed.
         System.err.println(e);
       }
     }
   }
 
 
+  public static void historySave(String title, String searchTerm) {
+    {
+      Connection connection = null;
+      try
+      {
+        connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
+
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30);
+
+        java.util.Date date = new Date();
+        java.sql.Timestamp timestamp = new java.sql.Timestamp(date.getTime());
+
+        System.out.println("INSERT  '" + title + "', '"+ searchTerm + "', '" + timestamp + "'");
+
+        statement.executeUpdate("replace into history values(null, '" + title + "', '"+ searchTerm + "', '" + timestamp + "')");
+      }
+      catch(SQLException e)
+      {
+        System.err.println("Error saving " + e.getMessage());
+      }
+      finally
+      {
+        try
+        {
+          if(connection != null)
+            connection.close();
+        }
+        catch(SQLException e)
+        {
+          System.err.println( e);
+        }
+      }
+    }
+  }
+
+  public static ArrayList<String> getHistory()
+  {
+    ArrayList<String> entriesOfHistory = new ArrayList<>();
+    Connection connection = null;
+    try
+    {
+      connection = DriverManager.getConnection("jdbc:sqlite:./dictionary.db");
+      Statement statement = connection.createStatement();
+      statement.setQueryTimeout(30);
+
+      ResultSet rs = statement.executeQuery("select * from history");
+      while(rs.next()) {
+        String titleOfSearched = rs.getString("title");
+        String searchedTerm = rs.getString("searchTerm");
+        String dateOfSearch = rs.getTimestamp("date").toString();
+        entriesOfHistory.add(dateOfSearch + " | " + searchedTerm + " | " +titleOfSearched);
+      }
+    }
+    catch(SQLException e)
+    {
+      System.err.println(e.getMessage());
+    }
+    finally
+    {
+      try
+      {
+        if(connection != null)
+          connection.close();
+      }
+      catch(SQLException e)
+      {
+        System.err.println(e);
+      }
+      return entriesOfHistory;
+    }
+  }
 }

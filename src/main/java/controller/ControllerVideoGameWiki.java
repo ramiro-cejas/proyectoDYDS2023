@@ -1,7 +1,6 @@
 package controller;
 
-import dyds.videogameInfo.fulllogic.DataBase;
-import dyds.videogameInfo.fulllogic.SearchResult;
+import utils.SearchResult;
 import model.ModelVideoGameWiki;
 import view.View;
 
@@ -32,10 +31,10 @@ public class ControllerVideoGameWiki {
         taskThread.start();
     }
 
-    public void onEventSearchSelectedResult(SearchResult sr) {
+    public void onEventSearchSelectedResult(SearchResult sr, String searchTerm) {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.searchSelectedTerm(sr);
+            modelVideoGameWiki.searchSelectedTerm(sr,searchTerm);
             viewVideoGameWiki.setWatingStatus();
         });
         taskThread.start();
@@ -44,7 +43,7 @@ public class ControllerVideoGameWiki {
     public void onEventSaveSearched(String resultBody) {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.updateStoredResult(resultBody);
+            modelVideoGameWiki.saveSearchedResult(resultBody);
             viewVideoGameWiki.setWatingStatus();
         });
         taskThread.start();
@@ -72,6 +71,17 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.updateStoredResult(titleToUpdate,bodyToUpdate);
+            viewVideoGameWiki.setWatingStatus();
+        });
+        taskThread.start();
+    }
+
+    public void onEventSelectHistory(String elementOfHistoryComboBox) {
+        String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\|");
+        for (String s: arrayOfSplitedString)
+            System.out.println(s.trim());
+        taskThread = new Thread(() -> {
+            viewVideoGameWiki.setWorkingStatus();
             viewVideoGameWiki.setWatingStatus();
         });
         taskThread.start();
