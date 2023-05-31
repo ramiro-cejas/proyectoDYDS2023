@@ -3,11 +3,11 @@ package controller;
 import utils.DataBase;
 import utils.SearchResult;
 import model.ModelVideoGameWiki;
-import view.View;
+import view.ViewVideoGameWiki;
 
 public class ControllerVideoGameWiki {
     private ModelVideoGameWiki modelVideoGameWiki;
-    private View viewVideoGameWiki;
+    private ViewVideoGameWiki viewVideoGameWiki;
     private Thread taskThread;
 
     public ControllerVideoGameWiki(ModelVideoGameWiki modelVideoGameWiki) {
@@ -15,11 +15,11 @@ public class ControllerVideoGameWiki {
     }
 
     public void start() {
-        viewVideoGameWiki = new View(this, modelVideoGameWiki);
+        viewVideoGameWiki = new ViewVideoGameWiki(this, modelVideoGameWiki);
         viewVideoGameWiki.showView();
     }
 
-    public void setViewVideoGameWiki(View viewVideoGameWiki){
+    public void setViewVideoGameWiki(ViewVideoGameWiki viewVideoGameWiki){
         this.viewVideoGameWiki = viewVideoGameWiki;
     }
 
@@ -27,7 +27,7 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.searchTerm(viewVideoGameWiki.getTextofTermToSearch());
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
@@ -36,7 +36,7 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.searchSelectedTerm(sr,searchTerm);
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
@@ -45,7 +45,7 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.saveSearchedResult(resultBody);
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
@@ -54,7 +54,7 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.searchStoredResult(titleStored);
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
@@ -63,7 +63,7 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.deleteStoredResult(titleStored);
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
@@ -72,18 +72,17 @@ public class ControllerVideoGameWiki {
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.updateStoredResult(titleToUpdate,bodyToUpdate);
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }
 
     public void onEventSelectHistory(String elementOfHistoryComboBox) {
         String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\.");
-        System.out.println(arrayOfSplitedString[0]);
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
             modelVideoGameWiki.searchTermByPageId(DataBase.getPageIdFromSavedHistorySearch(Integer.parseInt(arrayOfSplitedString[0])));
-            viewVideoGameWiki.setWatingStatus();
+            viewVideoGameWiki.setWaitingStatus();
         });
         taskThread.start();
     }

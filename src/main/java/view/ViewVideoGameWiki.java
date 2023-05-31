@@ -12,7 +12,7 @@ import model.ModelVideoGameWikiListener;
 import javax.swing.*;
 import java.awt.*;
 
-public class View {
+public class ViewVideoGameWiki {
     private JTextField textFieldSearchTerm;
     private JButton buttonSearch;
     private JPanel contentPane;
@@ -30,109 +30,90 @@ public class View {
     private JMenuItem deleteItem = new JMenuItem("Delete!");
     private JMenuItem saveItem = new JMenuItem("Save Changes!");
     private PopUPHandler popUpHandler;
-
-    public View(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWiki modelVideoGame) {
+    public ViewVideoGameWiki(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWiki modelVideoGame) {
         this.controllerVideoGameWiki = controllerVideoGame;
         this.modelVideoGameWiki = modelVideoGame;
         initListeners();
         setUp();
     }
-
     private void setUp() {
         textPaneResult.setContentType("text/html");
         textPaneStored.setContentType("text/html");
         updateStoredComboBox();
         updateHistoryComboBox();
-
         JPopupMenu storedInfoPopup = new JPopupMenu();
         storedInfoPopup.add(deleteItem);
         storedInfoPopup.add(saveItem);
         textPaneStored.setComponentPopupMenu(storedInfoPopup);
         popUpHandler = new PopUPHandler(contentPane);
     }
-
     private void initListeners() {
         buttonSearch.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventSearch();
         });
-
         buttonSaveLocally.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventSaveSearched(textPaneResult.getText());
         });
-
         comboBoxStored.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventSelectStored(comboBoxStored.getSelectedItem().toString());
         });
-
         deleteItem.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventDeleteStoredResult(comboBoxStored.getSelectedItem().toString());
         });
-
         saveItem.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventUpdateStroredResult(comboBoxStored.getSelectedItem().toString(),textPaneStored.getText());
         });
-
         comboBoxHistory.addActionListener(actionEvent -> {
             controllerVideoGameWiki.onEventSelectHistory(comboBoxHistory.getSelectedItem().toString());
         });
-
         modelVideoGameWiki.addListener(new ModelVideoGameWikiListener() {
             @Override
             public void parcialSearchHasFinished() {
                 showParcialResults();
-                setWatingStatus();
+                setWaitingStatus();
             }
             @Override
             public void queryHasFinished() {
                 showResult();
-                setWatingStatus();
+                setWaitingStatus();
             }
-
             @Override
             public void saveHasFinished() {
                 updateStoredComboBox();
                 textPaneStored.setText("");
                 popUpHandler.showSavedFinished();
             }
-
             @Override
             public void searchForStoredFinished() {
                 updateStoredExtract();
             }
-
             @Override
             public void deleteFinished() {
                 updateStoredComboBox();
                 textPaneStored.setText("");
                 popUpHandler.showDeleteFinished();
             }
-
             @Override
             public void updateHasFinished() {
                 popUpHandler.showSavedFinished();
             }
-
             @Override
             public void historySaveHasFinished() {
                 updateHistoryComboBox();
             }
         });
     }
-
     private void updateHistoryComboBox() {
         comboBoxHistory.setModel(new DefaultComboBoxModel(DataBase.getHistory().stream().sorted().toArray()));
     }
-
     private void updateStoredExtract() {
         textPaneStored.setText(modelVideoGameWiki.getStoredResultExtract());
     }
-
     private void showResult() {
         tabbedPane1.setSelectedIndex(1);
         textPaneResult.setText(modelVideoGameWiki.getLastSearchResult());
         textPaneResult.setCaretPosition(0);
     }
-
     private void showParcialResults() {
         JPopupMenu searchOptionsMenu = new JPopupMenu("Search Results");
         JsonArray jsonResults = modelVideoGameWiki.getParcialResults();
@@ -151,18 +132,16 @@ public class View {
         }
         searchOptionsMenu.show(textFieldSearchTerm, textFieldSearchTerm.getX(), textFieldSearchTerm.getY());
     }
-
     public void setWorkingStatus() {
         for(Component component: this.searchPanel.getComponents()) component.setEnabled(false);
         for(Component component: this.historyPanel.getComponents()) component.setEnabled(false);
         for(Component component: this.storagePanel.getComponents()) component.setEnabled(false);
     }
-    public void setWatingStatus() {
+    public void setWaitingStatus() {
         for(Component component: this.searchPanel.getComponents()) component.setEnabled(true);
         for(Component component: this.historyPanel.getComponents()) component.setEnabled(true);
         for(Component component: this.storagePanel.getComponents()) component.setEnabled(true);
     }
-
     public String getTextofTermToSearch() {
         return textFieldSearchTerm.getText();
     }
@@ -172,6 +151,7 @@ public class View {
     }
     public void showView() {
         JFrame frame = new JFrame("Video Game Info");
+        frame.setResizable(false);
         frame.setContentPane(contentPane);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.pack();
