@@ -3,12 +3,13 @@
   <grid id="27dc6" binding="contentPane" layout-manager="GridLayoutManager" row-count="1" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
     <margin top="0" left="0" bottom="0" right="0"/>
     <constraints>
-      <xy x="20" y="20" width="426" height="400"/>
+      <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties>
-      <minimumSize width="400" height="400"/>
+      <enabled value="true"/>
+      <minimumSize width="500" height="400"/>
       <opaque value="false"/>
-      <preferredSize width="400" height="400"/>
+      <preferredSize width="500" height="400"/>
     </properties>
     <border type="none"/>
     <children>
@@ -47,7 +48,9 @@
                 <children>
                   <component id="b1ad1" class="javax.swing.JTextPane" binding="textPaneStored">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <text value=""/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>

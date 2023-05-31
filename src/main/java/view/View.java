@@ -128,6 +128,7 @@ public class View {
     }
 
     private void showResult() {
+        tabbedPane1.setSelectedIndex(1);
         textPaneResult.setText(modelVideoGameWiki.getLastSearchResult());
         textPaneResult.setCaretPosition(0);
     }
@@ -152,12 +153,14 @@ public class View {
     }
 
     public void setWorkingStatus() {
-        for(Component c: this.searchPanel.getComponents()) c.setEnabled(false);
-        textPaneResult.setEnabled(false);
+        for(Component component: this.searchPanel.getComponents()) component.setEnabled(false);
+        for(Component component: this.historyPanel.getComponents()) component.setEnabled(false);
+        for(Component component: this.storagePanel.getComponents()) component.setEnabled(false);
     }
     public void setWatingStatus() {
-        for(Component c: this.searchPanel.getComponents()) c.setEnabled(true);
-        textPaneResult.setEnabled(true);
+        for(Component component: this.searchPanel.getComponents()) component.setEnabled(true);
+        for(Component component: this.historyPanel.getComponents()) component.setEnabled(true);
+        for(Component component: this.storagePanel.getComponents()) component.setEnabled(true);
     }
 
     public String getTextofTermToSearch() {

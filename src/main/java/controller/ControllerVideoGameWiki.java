@@ -1,5 +1,6 @@
 package controller;
 
+import utils.DataBase;
 import utils.SearchResult;
 import model.ModelVideoGameWiki;
 import view.View;
@@ -77,11 +78,11 @@ public class ControllerVideoGameWiki {
     }
 
     public void onEventSelectHistory(String elementOfHistoryComboBox) {
-        String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\|");
-        for (String s: arrayOfSplitedString)
-            System.out.println(s.trim());
+        String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\.");
+        System.out.println(arrayOfSplitedString[0]);
         taskThread = new Thread(() -> {
             viewVideoGameWiki.setWorkingStatus();
+            modelVideoGameWiki.searchTermByPageId(DataBase.getPageIdFromSavedHistorySearch(Integer.parseInt(arrayOfSplitedString[0])));
             viewVideoGameWiki.setWatingStatus();
         });
         taskThread.start();

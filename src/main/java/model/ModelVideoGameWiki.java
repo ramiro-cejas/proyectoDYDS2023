@@ -52,6 +52,33 @@ public class ModelVideoGameWiki {
             System.out.println(e.getMessage());
         }
     }
+    public void searchTermByPageId(String pageId){
+        try{
+            Response<String> callForPageResponse = wikipediaPageAPI.getExtractByPageID(pageId).execute();
+
+            Gson gson = new Gson();
+            JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
+            JsonObject query = jobj.get("query").getAsJsonObject();
+            JsonObject pages = query.get("pages").getAsJsonObject();
+            Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
+            Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
+            JsonObject page = first.getValue().getAsJsonObject();
+            JsonElement searchResultExtract = page.get("extract");
+            if (searchResultExtract == null) {
+                selectedResult = "No Results";
+            } else {
+                JsonElement searchResultTitle = page.get("title");
+                selectedResultTitle = searchResultTitle.getAsString().replace("\\n", "\n");
+
+                selectedResult = "<h1>" + searchResultTitle.getAsString().replace("\\n", "\n") + "</h1>";
+                selectedResult += searchResultExtract.getAsString().replace("\\n", "\n");
+                selectedResult = textToHtml(selectedResult);
+            }
+            modelNotifier.notifyQueryHasFinished();
+        } catch (Exception e){
+            System.out.println(e.getMessage());
+        }
+    }
     public void searchSelectedTerm(SearchResult searchResult, String searchTerm){
         try{
             Response<String> callForPageResponse = wikipediaPageAPI.getExtractByPageID(searchResult.pageID).execute();
@@ -73,15 +100,14 @@ public class ModelVideoGameWiki {
                 selectedResult += searchResultExtract.getAsString().replace("\\n", "\n");
                 selectedResult = textToHtml(selectedResult);
             }
-            saveHistoryOfTermSearcherd(searchResult.title,searchTerm);
+            saveHistoryOfTermSearcherd(searchResult.title,searchTerm, searchResult.pageID);
             modelNotifier.notifyQueryHasFinished();
         } catch (Exception e){
             System.out.println(e.getMessage());
         }
     }
-
-    private void saveHistoryOfTermSearcherd(String title, String searchTerm) {
-        DataBase.historySave(title, searchTerm);
+    private void saveHistoryOfTermSearcherd(String title, String searchTerm, String pageId) {
+        DataBase.historySave(title, searchTerm, pageId);
         modelNotifier.notifyHistorySaveFinished();
     }
     private void notifyDeleteStoredFinish() {
@@ -108,10 +134,8 @@ public class ModelVideoGameWiki {
         storedResultExtract = DataBase.getExtract(titleStored);
         modelNotifier.notifySearchForStoredFinish();
     }
-
     public void saveSearchedResult(String resultBody) {
         DataBase.saveInfo(selectedResultTitle, resultBody);
         modelNotifier.notifySaveSearchedResultFinish();
     }
-
 }
