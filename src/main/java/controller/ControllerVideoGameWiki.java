@@ -1,15 +1,18 @@
 package controller;
 
-import utils.DataBase;
+import model.ModelVideoGameWikiInterface;
 import utils.SearchResult;
 import model.ModelVideoGameWiki;
 import view.ViewVideoGameWiki;
 import view.ViewVideoGameWikiInterface;
 
 public class ControllerVideoGameWiki {
-    private ModelVideoGameWiki modelVideoGameWiki;
+    private final ModelVideoGameWiki modelVideoGameWiki;
+    private final ControllerSearchHandler controllerSearchHandler = new ControllerSearchHandler(this);
+    private final ControllerStoredHandler controllerStoredHandler = new ControllerStoredHandler(this);
+    private final ControllerSelectHandler controllerSelectHandler = new ControllerSelectHandler(this);
+    private final ControllerHistoryHandler controllerHistoryHandler = new ControllerHistoryHandler(this);
     private ViewVideoGameWikiInterface viewVideoGameWiki;
-    private Thread taskThread;
 
     public ControllerVideoGameWiki(ModelVideoGameWiki modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
@@ -20,71 +23,39 @@ public class ControllerVideoGameWiki {
         viewVideoGameWiki.start();
     }
 
-    public void setViewVideoGameWiki(ViewVideoGameWiki viewVideoGameWikiVisual){
-        this.viewVideoGameWiki = viewVideoGameWikiVisual;
-    }
-
     public void onEventSearch() {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.searchTerm(viewVideoGameWiki.getTextofTermToSearch());
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerSearchHandler.onEventSearch();
     }
 
     public void onEventSearchSelectedResult(SearchResult sr, String searchTerm) {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.searchSelectedTerm(sr,searchTerm);
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerSearchHandler.onEventSearchSelectedResult(sr, searchTerm);
     }
 
     public void onEventSaveSearched(String resultBody) {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.saveSearchedResult(resultBody);
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerHistoryHandler.onEventSaveSearched(resultBody);
     }
 
     public void onEventSelectStored(String titleStored) {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.searchStoredResult(titleStored);
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerSelectHandler.onEventSelectStored(titleStored);
     }
 
     public void onEventDeleteStoredResult(String titleStored) {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.deleteStoredResult(titleStored);
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerStoredHandler.onEventDeleteStoredResult(titleStored);
     }
 
     public void onEventUpdateStroredResult(String titleToUpdate, String bodyToUpdate) {
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.updateStoredResult(titleToUpdate,bodyToUpdate);
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerStoredHandler.onEventUpdateStroredResult(titleToUpdate, bodyToUpdate);
     }
 
     public void onEventSelectHistory(String elementOfHistoryComboBox) {
-        String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\.");
-        taskThread = new Thread(() -> {
-            viewVideoGameWiki.setWorkingStatus();
-            modelVideoGameWiki.searchTermByPageId(DataBase.getPageIdFromSavedHistorySearch(Integer.parseInt(arrayOfSplitedString[0])));
-            viewVideoGameWiki.setWaitingStatus();
-        });
-        taskThread.start();
+        controllerSelectHandler.onEventSelectHistory(elementOfHistoryComboBox);
+    }
+
+    public ViewVideoGameWikiInterface getViewVideoGameWiki() {
+        return viewVideoGameWiki;
+    }
+
+    public ModelVideoGameWikiInterface getModelVideoGameWiki() {
+        return modelVideoGameWiki;
     }
 }

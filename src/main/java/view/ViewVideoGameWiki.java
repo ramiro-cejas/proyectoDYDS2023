@@ -5,6 +5,7 @@ import model.ModelVideoGameWiki;
 import utils.SearchResult;
 
 import java.util.Arrays;
+import java.util.Objects;
 
 public class ViewVideoGameWiki implements ViewVideoGameWikiInterface{
     ViewVideoGameWikiLogic viewLogic;
@@ -34,12 +35,12 @@ public class ViewVideoGameWiki implements ViewVideoGameWikiInterface{
 
     @Override
     public String getSelectedSavedItem() {
-        return viewLogic.comboBoxStored.getSelectedItem().toString();
+        return Objects.requireNonNull(viewLogic.comboBoxStored.getSelectedItem()).toString();
     }
 
     @Override
     public String getSelectedHistoryItem() {
-        return viewLogic.comboBoxHistory.getSelectedItem().toString();
+        return Objects.requireNonNull(viewLogic.comboBoxHistory.getSelectedItem()).toString();
     }
 
     @Override
