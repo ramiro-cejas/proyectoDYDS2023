@@ -1,160 +1,60 @@
 package view;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
 import controller.ControllerVideoGameWiki;
-import utils.DataBase;
-import utils.SearchResult;
 import model.ModelVideoGameWiki;
-import model.ModelVideoGameWikiListener;
+import utils.SearchResult;
 
-import javax.swing.*;
-import java.awt.*;
+import java.util.Arrays;
 
-public class ViewVideoGameWiki {
-    private JTextField textFieldSearchTerm;
-    private JButton buttonSearch;
-    private JPanel contentPane;
-    private JTextPane textPaneResult;
-    private JButton buttonSaveLocally;
-    private JTabbedPane tabbedPane1;
-    private JPanel searchPanel;
-    private JPanel storagePanel;
-    private JComboBox comboBoxStored;
-    private JTextPane textPaneStored;
-    private JComboBox comboBoxHistory;
-    private JPanel historyPanel;
-    private ModelVideoGameWiki modelVideoGameWiki;
-    private ControllerVideoGameWiki controllerVideoGameWiki;
-    private JMenuItem deleteItem = new JMenuItem("Delete!");
-    private JMenuItem saveItem = new JMenuItem("Save Changes!");
-    private PopUPHandler popUpHandler;
-    public ViewVideoGameWiki(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWiki modelVideoGame) {
-        this.controllerVideoGameWiki = controllerVideoGame;
-        this.modelVideoGameWiki = modelVideoGame;
-        initListeners();
-        setUp();
+public class ViewVideoGameWiki implements ViewVideoGameWikiInterface{
+    ViewVideoGameWikiLogic viewLogic;
+    public ViewVideoGameWiki(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWiki modelVideoGame){
+        viewLogic = new ViewVideoGameWikiLogic(controllerVideoGame, modelVideoGame);
     }
-    private void setUp() {
-        textPaneResult.setContentType("text/html");
-        textPaneStored.setContentType("text/html");
-        updateStoredComboBox();
-        updateHistoryComboBox();
-        JPopupMenu storedInfoPopup = new JPopupMenu();
-        storedInfoPopup.add(deleteItem);
-        storedInfoPopup.add(saveItem);
-        textPaneStored.setComponentPopupMenu(storedInfoPopup);
-        popUpHandler = new PopUPHandler(contentPane);
+    @Override
+    public void start(){
+        viewLogic.showView();
     }
-    private void initListeners() {
-        buttonSearch.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventSearch();
-        });
-        buttonSaveLocally.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventSaveSearched(textPaneResult.getText());
-        });
-        comboBoxStored.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventSelectStored(comboBoxStored.getSelectedItem().toString());
-        });
-        deleteItem.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventDeleteStoredResult(comboBoxStored.getSelectedItem().toString());
-        });
-        saveItem.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventUpdateStroredResult(comboBoxStored.getSelectedItem().toString(),textPaneStored.getText());
-        });
-        comboBoxHistory.addActionListener(actionEvent -> {
-            controllerVideoGameWiki.onEventSelectHistory(comboBoxHistory.getSelectedItem().toString());
-        });
-        modelVideoGameWiki.addListener(new ModelVideoGameWikiListener() {
-            @Override
-            public void parcialSearchHasFinished() {
-                showParcialResults();
-                setWaitingStatus();
-            }
-            @Override
-            public void queryHasFinished() {
-                showResult();
-                setWaitingStatus();
-            }
-            @Override
-            public void saveHasFinished() {
-                updateStoredComboBox();
-                textPaneStored.setText("");
-                popUpHandler.showSavedFinished();
-            }
-            @Override
-            public void searchForStoredFinished() {
-                updateStoredExtract();
-            }
-            @Override
-            public void deleteFinished() {
-                updateStoredComboBox();
-                textPaneStored.setText("");
-                popUpHandler.showDeleteFinished();
-            }
-            @Override
-            public void updateHasFinished() {
-                popUpHandler.showSavedFinished();
-            }
-            @Override
-            public void historySaveHasFinished() {
-                updateHistoryComboBox();
-            }
-        });
-    }
-    private void updateHistoryComboBox() {
-        comboBoxHistory.setModel(new DefaultComboBoxModel(DataBase.getHistory().stream().sorted().toArray()));
-    }
-    private void updateStoredExtract() {
-        textPaneStored.setText(modelVideoGameWiki.getStoredResultExtract());
-    }
-    private void showResult() {
-        tabbedPane1.setSelectedIndex(1);
-        textPaneResult.setText(modelVideoGameWiki.getLastSearchResult());
-        textPaneResult.setCaretPosition(0);
-    }
-    private void showParcialResults() {
-        JPopupMenu searchOptionsMenu = new JPopupMenu("Search Results");
-        JsonArray jsonResults = modelVideoGameWiki.getParcialResults();
-        for (JsonElement je : jsonResults) {
-            JsonObject jsonObject = je.getAsJsonObject();
-            String searchResultTitle = jsonObject.get("title").getAsString();
-            String searchResultPageId = jsonObject.get("pageid").getAsString();
-            String searchResultSnippet = jsonObject.get("snippet").getAsString();
-
-            SearchResult searchResult = new SearchResult(searchResultTitle, searchResultPageId, searchResultSnippet);
-            searchOptionsMenu.add(searchResult);
-            searchResult.addActionListener(actionEvent ->{
-                setWorkingStatus();
-                controllerVideoGameWiki.onEventSearchSelectedResult(searchResult, textFieldSearchTerm.getText());
-            });
-        }
-        searchOptionsMenu.show(textFieldSearchTerm, textFieldSearchTerm.getX(), textFieldSearchTerm.getY());
-    }
+    @Override
     public void setWorkingStatus() {
-        for(Component component: this.searchPanel.getComponents()) component.setEnabled(false);
-        for(Component component: this.historyPanel.getComponents()) component.setEnabled(false);
-        for(Component component: this.storagePanel.getComponents()) component.setEnabled(false);
+        viewLogic.setWorkingStatus();
     }
+    @Override
     public void setWaitingStatus() {
-        for(Component component: this.searchPanel.getComponents()) component.setEnabled(true);
-        for(Component component: this.historyPanel.getComponents()) component.setEnabled(true);
-        for(Component component: this.storagePanel.getComponents()) component.setEnabled(true);
+        viewLogic.setWaitingStatus();
     }
+    @Override
     public String getTextofTermToSearch() {
-        return textFieldSearchTerm.getText();
+        return viewLogic.getTextofTermToSearch();
+    }
+    @Override
+    public String getResultOfSearch() {
+        return viewLogic.textPaneResult.getText();
     }
 
-    public void updateStoredComboBox(){
-        comboBoxStored.setModel(new DefaultComboBoxModel(DataBase.getTitles().stream().sorted().toArray()));
+    @Override
+    public String getSelectedSavedItem() {
+        return viewLogic.comboBoxStored.getSelectedItem().toString();
     }
-    public void showView() {
-        JFrame frame = new JFrame("Video Game Info");
-        frame.setResizable(false);
-        frame.setContentPane(contentPane);
-        frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.pack();
-        frame.setVisible(true);
+
+    @Override
+    public String getSelectedHistoryItem() {
+        return viewLogic.comboBoxHistory.getSelectedItem().toString();
+    }
+
+    @Override
+    public void setSelectedStoredItem(String title) {
+        SearchResult searchResult = new SearchResult(title,"","");
+        viewLogic.comboBoxStored.setSelectedItem(searchResult);
+    }
+
+    @Override
+    public void setSelectedHistoryItem(String item) {
+        SearchResult searchResult = new SearchResult(item,"","");
+        viewLogic.comboBoxHistory.setSelectedItem(searchResult);
+    }
+    @Override
+    public void pressSearchButton() {
+        Arrays.stream(viewLogic.buttonSearch.getActionListeners()).iterator().next().actionPerformed(null);
     }
 }

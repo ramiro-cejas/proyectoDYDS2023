@@ -4,10 +4,11 @@ import utils.DataBase;
 import utils.SearchResult;
 import model.ModelVideoGameWiki;
 import view.ViewVideoGameWiki;
+import view.ViewVideoGameWikiInterface;
 
 public class ControllerVideoGameWiki {
     private ModelVideoGameWiki modelVideoGameWiki;
-    private ViewVideoGameWiki viewVideoGameWiki;
+    private ViewVideoGameWikiInterface viewVideoGameWiki;
     private Thread taskThread;
 
     public ControllerVideoGameWiki(ModelVideoGameWiki modelVideoGameWiki) {
@@ -16,11 +17,11 @@ public class ControllerVideoGameWiki {
 
     public void start() {
         viewVideoGameWiki = new ViewVideoGameWiki(this, modelVideoGameWiki);
-        viewVideoGameWiki.showView();
+        viewVideoGameWiki.start();
     }
 
-    public void setViewVideoGameWiki(ViewVideoGameWiki viewVideoGameWiki){
-        this.viewVideoGameWiki = viewVideoGameWiki;
+    public void setViewVideoGameWiki(ViewVideoGameWiki viewVideoGameWikiVisual){
+        this.viewVideoGameWiki = viewVideoGameWikiVisual;
     }
 
     public void onEventSearch() {
