@@ -2,11 +2,11 @@ package model;
 
 import java.util.ArrayList;
 
-public class ModelNotifier {
+public class ModelNotifierHandler {
 
     private ArrayList<ModelVideoGameWikiListener> listeners;
 
-    public ModelNotifier(){
+    public ModelNotifierHandler(){
         listeners = new ArrayList<>();
     }
 

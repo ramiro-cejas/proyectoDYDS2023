@@ -6,20 +6,32 @@
       <xy x="20" y="20" width="500" height="400"/>
     </constraints>
     <properties>
+      <background color="-14803426"/>
       <enabled value="true"/>
+      <foreground color="-14803426"/>
       <minimumSize width="500" height="400"/>
       <opaque value="false"/>
       <preferredSize width="500" height="400"/>
     </properties>
     <border type="none"/>
     <children>
-      <tabbedpane id="61483" binding="tabbedPane1" default-binding="true">
+      <tabbedpane id="61483" binding="tabbedPane" custom-create="true">
         <constraints>
           <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="3" hsize-policy="3" anchor="0" fill="3" indent="0" use-parent-layout="false">
             <preferred-size width="200" height="200"/>
           </grid>
         </constraints>
-        <properties/>
+        <properties>
+          <autoscrolls value="false"/>
+          <background color="-14803426"/>
+          <enabled value="true"/>
+          <font name="Roboto Light"/>
+          <foreground color="-3487030"/>
+          <inheritsPopupMenu value="false"/>
+          <opaque value="true"/>
+          <tabLayoutPolicy value="0"/>
+          <tabPlacement value="1"/>
+        </properties>
         <border type="none"/>
         <children>
           <grid id="563e4" binding="storagePanel" layout-manager="GridLayoutManager" row-count="2" column-count="1" same-size-horizontally="false" same-size-vertically="false" hgap="-1" vgap="-1">
@@ -27,7 +39,13 @@
             <constraints>
               <tabbedpane title="Stored Info"/>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-14803426"/>
+              <enabled value="true"/>
+              <font name="Roboto Light"/>
+              <foreground color="-14803426"/>
+              <opaque value="false"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="ebf25" class="javax.swing.JComboBox" binding="comboBoxStored">
@@ -36,6 +54,8 @@
                 </constraints>
                 <properties>
                   <editable value="false"/>
+                  <font name="Roboto Light"/>
+                  <foreground color="-14803426"/>
                   <model/>
                 </properties>
               </component>
@@ -49,6 +69,9 @@
                   <component id="b1ad1" class="javax.swing.JTextPane" binding="textPaneStored">
                     <constraints/>
                     <properties>
+                      <background color="-14803426"/>
+                      <font name="Roboto Light"/>
+                      <foreground color="-3487030"/>
                       <text value=""/>
                     </properties>
                   </component>
@@ -61,22 +84,28 @@
             <constraints>
               <tabbedpane title="Search in Wikipedia"/>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-14803426"/>
+              <foreground color="-14803426"/>
+            </properties>
             <border type="none"/>
             <children>
-              <component id="7ec09" class="javax.swing.JTextField" binding="textFieldSearchTerm">
+              <component id="7ec09" class="javax.swing.JTextField" binding="textFieldSearchTerm" custom-create="true">
                 <constraints>
                   <grid row="0" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="6" anchor="8" fill="1" indent="0" use-parent-layout="false">
                     <preferred-size width="150" height="-1"/>
                   </grid>
                 </constraints>
-                <properties/>
+                <properties>
+                  <font name="Roboto Light"/>
+                </properties>
               </component>
-              <component id="fcd12" class="javax.swing.JButton" binding="buttonSearch">
+              <component id="fcd12" class="javax.swing.JButton" binding="buttonSearch" custom-create="true">
                 <constraints>
                   <grid row="1" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
                 <properties>
+                  <font name="Roboto Light"/>
                   <label value="Search!"/>
                   <text value="Search!"/>
                 </properties>
@@ -90,11 +119,13 @@
                 <children>
                   <component id="11fa5" class="javax.swing.JTextPane" binding="textPaneResult">
                     <constraints/>
-                    <properties/>
+                    <properties>
+                      <background color="-14803426"/>
+                    </properties>
                   </component>
                 </children>
               </scrollpane>
-              <component id="9e9ee" class="javax.swing.JButton" binding="buttonSaveLocally">
+              <component id="9e9ee" class="javax.swing.JButton" binding="buttonSaveLocally" custom-create="true">
                 <constraints>
                   <grid row="3" column="0" row-span="1" col-span="1" vsize-policy="0" hsize-policy="3" anchor="0" fill="1" indent="0" use-parent-layout="false"/>
                 </constraints>
@@ -109,7 +140,10 @@
             <constraints>
               <tabbedpane title="History"/>
             </constraints>
-            <properties/>
+            <properties>
+              <background color="-14803426"/>
+              <foreground color="-14803426"/>
+            </properties>
             <border type="none"/>
             <children>
               <component id="2ffb4" class="javax.swing.JComboBox" binding="comboBoxHistory">

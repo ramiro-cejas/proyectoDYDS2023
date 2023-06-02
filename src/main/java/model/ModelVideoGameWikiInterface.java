@@ -36,7 +36,7 @@ public interface ModelVideoGameWikiInterface {
 
     ModelSearchHandler getModelSearchHandler();
 
-    ModelNotifier getModelNotifier();
+    ModelNotifierHandler getModelNotifier();
 
     String getSelectedResultTitle();
 

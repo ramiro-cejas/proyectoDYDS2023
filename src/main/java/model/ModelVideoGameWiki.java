@@ -11,7 +11,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private final ModelSaveHandler modelSaveHandler = new ModelSaveHandler(this);
     private final ModelSearchHandler modelSearchHandler = new ModelSearchHandler(this);
-    private final ModelNotifier modelNotifier;
+    private final ModelNotifierHandler modelNotifierHandler;
     private String selectedResultTitle = null;
     private String selectedResult = null;
     private String storedResultExtract = null;
@@ -19,7 +19,7 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private WikipediaSearchAPI wikipediaSearchAPI;
     private WikipediaPageAPI wikipediaPageAPI;
     @Override
-    public void addListener(ModelVideoGameWikiListener listener) { modelNotifier.addListener(listener); }
+    public void addListener(ModelVideoGameWikiListener listener) { modelNotifierHandler.addListener(listener); }
     @Override
     public String getLastSearchResultTitle() { return selectedResultTitle;  }
     @Override
@@ -28,16 +28,19 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     public JsonArray getParcialResults() { return parcialResults;  }
     @Override
     public String getStoredResultExtract() { return storedResultExtract; }
-    public ModelVideoGameWiki(){
+    public ModelVideoGameWiki() {
+        modelNotifierHandler = new ModelNotifierHandler();
+        setUpModel();
+    }
+
+    private void setUpModel(){
+        DataBase.loadDatabase();
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://en.wikipedia.org/w/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
-
-        DataBase.loadDatabase();
         wikipediaSearchAPI = retrofit.create(WikipediaSearchAPI.class);
         wikipediaPageAPI = retrofit.create(WikipediaPageAPI.class);
-        modelNotifier = new ModelNotifier();
     }
     @Override
     public void searchTerm(String termToSearch) {
@@ -54,7 +57,7 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     @Override
     public void notifyDeleteStoredFinish() {
-        modelNotifier.notifyDeleteStoredFinish();
+        modelNotifierHandler.notifyDeleteStoredFinish();
     }
 
     static String textToHtml(String text) {
@@ -64,12 +67,13 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
                 .replace("'", "`");
         builder.append(fixedText);
         builder.append("</font>");
+        System.out.println(builder);
         return builder.toString();
     }
     @Override
     public void updateStoredResult(String title, String body) {
         DataBase.saveInfo(title, body);
-        modelNotifier.notifyUpdateStoredFinish();
+        modelNotifierHandler.notifyUpdateStoredFinish();
     }
     @Override
     public void deleteStoredResult(String titleStored) {
@@ -79,7 +83,7 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     @Override
     public void searchStoredResult(String titleStored) {
         storedResultExtract = DataBase.getExtract(titleStored);
-        modelNotifier.notifySearchForStoredFinish();
+        modelNotifierHandler.notifySearchForStoredFinish();
     }
     @Override
     public void saveSearchedResult(String resultBody) {
@@ -97,8 +101,8 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     }
 
     @Override
-    public ModelNotifier getModelNotifier() {
-        return modelNotifier;
+    public ModelNotifierHandler getModelNotifier() {
+        return modelNotifierHandler;
     }
 
     @Override

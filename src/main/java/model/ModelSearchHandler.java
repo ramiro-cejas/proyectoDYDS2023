@@ -33,52 +33,38 @@ public class ModelSearchHandler {
     void searchTermByPageId(String pageId) {
         try {
             Response<String> callForPageResponse = modelVideoGameWiki.getWikipediaPageAPI().getExtractByPageID(pageId).execute();
-
-            Gson gson = new Gson();
-            JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
-            JsonObject query = jobj.get("query").getAsJsonObject();
-            JsonObject pages = query.get("pages").getAsJsonObject();
-            Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
-            Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
-            JsonObject page = first.getValue().getAsJsonObject();
-            JsonElement searchResultExtract = page.get("extract");
-            if (searchResultExtract == null) {
-                modelVideoGameWiki.setSelectedResult("No Results");
-            } else {
-                JsonElement searchResultTitle = page.get("title");
-                modelVideoGameWiki.setSelectedResultTitle(searchResultTitle.getAsString().replace("\\n", "\n"));
-
-                modelVideoGameWiki.setSelectedResult("<h1>" + searchResultTitle.getAsString().replace("\\n", "\n") + "</h1>");
-                modelVideoGameWiki.setSelectedResult(modelVideoGameWiki.getSelectedResult() + searchResultExtract.getAsString().replace("\\n", "\n"));
-                modelVideoGameWiki.setSelectedResult(ModelVideoGameWiki.textToHtml(modelVideoGameWiki.getSelectedResult()));
-            }
+            processResponse(callForPageResponse);
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {
             System.out.println(e.getMessage());
         }
     }
 
+    private void processResponse(Response<String> callForPageResponse) {
+        Gson gson = new Gson();
+        JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
+        JsonObject query = jobj.get("query").getAsJsonObject();
+        JsonObject pages = query.get("pages").getAsJsonObject();
+        Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
+        Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
+        JsonObject page = first.getValue().getAsJsonObject();
+        JsonElement searchResultExtract = page.get("extract");
+        if (searchResultExtract == null) {
+            modelVideoGameWiki.setSelectedResult("No Results");
+        } else {
+            JsonElement searchResultTitle = page.get("title");
+            modelVideoGameWiki.setSelectedResultTitle(searchResultTitle.getAsString().replace("\\n", "\n"));
+
+            modelVideoGameWiki.setSelectedResult("<h1 face=\"roboto\" color=\"white\">" + searchResultTitle.getAsString().replace("\\n", "\n") + "</h1>");
+            modelVideoGameWiki.setSelectedResult(modelVideoGameWiki.getSelectedResult() + "<font face=\"roboto\" color=\"white\">" + searchResultExtract.getAsString().replace("\\n", "\n") + "</font>");
+            modelVideoGameWiki.setSelectedResult(ModelVideoGameWiki.textToHtml(modelVideoGameWiki.getSelectedResult()));
+        }
+    }
+
     void searchSelectedTerm(SearchResult searchResult, String searchTerm) {
         try {
             Response<String> callForPageResponse = modelVideoGameWiki.getWikipediaPageAPI().getExtractByPageID(searchResult.pageID).execute();
-
-            Gson gson = new Gson();
-            JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
-            JsonObject query = jobj.get("query").getAsJsonObject();
-            JsonObject pages = query.get("pages").getAsJsonObject();
-            Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
-            Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
-            JsonObject page = first.getValue().getAsJsonObject();
-            JsonElement searchResultExtract = page.get("extract");
-            if (searchResultExtract == null) {
-                modelVideoGameWiki.setSelectedResult("No Results");
-            } else {
-                modelVideoGameWiki.setSelectedResultTitle(searchResult.title);
-
-                modelVideoGameWiki.setSelectedResult("<h1>" + searchResult.title + "</h1>");
-                modelVideoGameWiki.setSelectedResult(modelVideoGameWiki.getSelectedResult() + searchResultExtract.getAsString().replace("\\n", "\n"));
-                modelVideoGameWiki.setSelectedResult(ModelVideoGameWiki.textToHtml(modelVideoGameWiki.getSelectedResult()));
-            }
+            processResponse(callForPageResponse);
             modelVideoGameWiki.getModelSaveHandler().saveHistoryOfTermSearcherd(searchResult.title, searchTerm, searchResult.pageID);
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {

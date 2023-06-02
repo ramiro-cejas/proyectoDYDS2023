@@ -12,7 +12,7 @@ public class UpdaterViewHandler {
     }
 
     void updateHistoryComboBox() {
-        viewVideoGameWikiLogic.getComboBoxHistory().setModel(new DefaultComboBoxModel<Object>(DataBase.getHistory().stream().sorted().toArray()));
+        viewVideoGameWikiLogic.getComboBoxHistory().setModel(new DefaultComboBoxModel<Object>(DataBase.getHistory().stream().toArray()));
     }
 
     void updateStoredExtract() {
@@ -20,6 +20,6 @@ public class UpdaterViewHandler {
     }
 
     public void updateStoredComboBox() {
-        viewVideoGameWikiLogic.getComboBoxStored().setModel(new DefaultComboBoxModel<Object>(DataBase.getTitles().stream().sorted().toArray()));
+        viewVideoGameWikiLogic.getComboBoxStored().setModel(new DefaultComboBoxModel<Object>(DataBase.getTitles().stream().toArray()));
     }
 }

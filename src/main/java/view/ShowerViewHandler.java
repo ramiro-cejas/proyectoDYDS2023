@@ -5,8 +5,6 @@ import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import utils.SearchResult;
 
-import javax.swing.*;
-
 public class ShowerViewHandler {
     private final ViewVideoGameWikiLogic viewVideoGameWikiLogic;
 
@@ -15,7 +13,7 @@ public class ShowerViewHandler {
     }
 
     void showResult() {
-        viewVideoGameWikiLogic.getTabbedPane1().setSelectedIndex(1);
+        viewVideoGameWikiLogic.getTabbedPane().setSelectedIndex(1);
         viewVideoGameWikiLogic.getTextPaneResult().setText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult());
         viewVideoGameWikiLogic.getTextPaneResult().setCaretPosition(0);
     }

@@ -113,6 +113,7 @@ public class DataBase {
         String titleOfSearched = rs.getString("title");
         String searchedTerm = rs.getString("searchTerm");
         String dateOfSearch = rs.getTimestamp("date").toString();
+        System.out.println(idOfSearchedTermEntry + ". " +dateOfSearch + " | " + searchedTerm + " | " +titleOfSearched);
         entriesOfHistory.add(idOfSearchedTermEntry + ". " +dateOfSearch + " | " + searchedTerm + " | " +titleOfSearched);
       }
     }

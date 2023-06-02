@@ -1,6 +1,12 @@
 package view;
 
+import view.CustomComponents.CustButton.CustomButton;
+import view.CustomComponents.CustomTextField;
+import view.CustomComponents.MaterialTabbed;
+
 import javax.swing.*;
+import javax.swing.text.Style;
+import javax.swing.text.StyledDocument;
 import java.awt.*;
 
 public class ViewVideoGameWikiVisual {
@@ -9,7 +15,7 @@ public class ViewVideoGameWikiVisual {
     protected JPanel contentPane;
     protected JTextPane textPaneResult;
     protected JButton buttonSaveLocally;
-    protected JTabbedPane tabbedPane1;
+    protected JTabbedPane tabbedPane;
     protected JPanel searchPanel;
     protected JPanel storagePanel;
     protected JComboBox comboBoxStored;
@@ -19,13 +25,21 @@ public class ViewVideoGameWikiVisual {
     protected JMenuItem deleteItem = new JMenuItem("Delete!");
     protected JMenuItem saveItem = new JMenuItem("Save Changes!");
     protected JPopupMenu searchOptionsMenu = new JPopupMenu("Search Results");
+    protected Style style;
+    protected StyledDocument doc;
     public ViewVideoGameWikiVisual() {
         textPaneResult.setContentType("text/html");
         textPaneStored.setContentType("text/html");
+
         JPopupMenu storedInfoPopup = new JPopupMenu();
         storedInfoPopup.add(deleteItem);
         storedInfoPopup.add(saveItem);
         textPaneStored.setComponentPopupMenu(storedInfoPopup);
+        Font formattedFont = new Font("Roboto Light", Font.BOLD, 12);
+        buttonSearch.setFont(formattedFont);
+        buttonSaveLocally.setFont(formattedFont);
+        tabbedPane.setFont(formattedFont);
+        comboBoxHistory.setFont(formattedFont);
     }
     public void setWorkingStatus() {
         for(Component component: this.searchPanel.getComponents()) component.setEnabled(false);
@@ -86,12 +100,12 @@ public class ViewVideoGameWikiVisual {
         this.buttonSaveLocally = buttonSaveLocally;
     }
 
-    public JTabbedPane getTabbedPane1() {
-        return tabbedPane1;
+    public JTabbedPane getTabbedPane() {
+        return tabbedPane;
     }
 
-    public void setTabbedPane1(JTabbedPane tabbedPane1) {
-        this.tabbedPane1 = tabbedPane1;
+    public void setTabbedPane(JTabbedPane tabbedPane1) {
+        this.tabbedPane = tabbedPane1;
     }
 
     public JPanel getSearchPanel() {
@@ -157,4 +171,12 @@ public class ViewVideoGameWikiVisual {
     public void setSaveItem(JMenuItem saveItem) {
         this.saveItem = saveItem;
     }
+
+    private void createUIComponents() {
+        tabbedPane = new MaterialTabbed();
+        buttonSearch = new CustomButton();
+        buttonSaveLocally = new CustomButton();
+        textFieldSearchTerm = new CustomTextField();
+    }
+
 }
