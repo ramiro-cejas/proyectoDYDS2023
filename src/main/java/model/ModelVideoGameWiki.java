@@ -16,8 +16,6 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private String selectedResult = null;
     private String storedResultExtract = null;
     private JsonArray parcialResults = null;
-    private WikipediaSearchAPI wikipediaSearchAPI;
-    private WikipediaPageAPI wikipediaPageAPI;
     @Override
     public void addListener(ModelVideoGameWikiListener listener) { modelNotifierHandler.addListener(listener); }
     @Override
@@ -35,12 +33,6 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     private void setUpModel(){
         DataBase.loadDatabase();
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://en.wikipedia.org/w/")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-        wikipediaSearchAPI = retrofit.create(WikipediaSearchAPI.class);
-        wikipediaPageAPI = retrofit.create(WikipediaPageAPI.class);
     }
     @Override
     public void searchTerm(String termToSearch) {
@@ -60,16 +52,6 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
         modelNotifierHandler.notifyDeleteStoredFinish();
     }
 
-    static String textToHtml(String text) {
-        StringBuilder builder = new StringBuilder();
-        builder.append("<font face=\"arial\">");
-        String fixedText = text
-                .replace("'", "`");
-        builder.append(fixedText);
-        builder.append("</font>");
-        System.out.println(builder);
-        return builder.toString();
-    }
     @Override
     public void updateStoredResult(String title, String body) {
         DataBase.saveInfo(title, body);
@@ -131,22 +113,12 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     }
 
     @Override
-    public WikipediaSearchAPI getWikipediaSearchAPI() {
-        return wikipediaSearchAPI;
-    }
-
-    @Override
-    public void setWikipediaSearchAPI(WikipediaSearchAPI wikipediaSearchAPI) {
-        this.wikipediaSearchAPI = wikipediaSearchAPI;
-    }
-
-    @Override
     public WikipediaPageAPI getWikipediaPageAPI() {
-        return wikipediaPageAPI;
+        return modelSearchHandler.getWikipediaPageAPI();
     }
 
     @Override
     public void setWikipediaPageAPI(WikipediaPageAPI wikipediaPageAPI) {
-        this.wikipediaPageAPI = wikipediaPageAPI;
+        modelSearchHandler.setWikipediaPageAPI(wikipediaPageAPI);
     }
 }

@@ -62,7 +62,9 @@ public class CustomButton extends JButton {
         colorOver = new Color(126, 126, 126);
         colorClick = new Color(77, 77, 77);
         borderColor = new Color(112, 112, 112);
-        setForeground(new Color(255,255,255));
+        setForeground(new Color(0,0,0));
+        //TODO si se compila en la de escritorio debería ser blanco
+        //setForeground(new Color(255,255,255));
         setContentAreaFilled(false);
         addMouseListener(new MouseAdapter() {
             @Override

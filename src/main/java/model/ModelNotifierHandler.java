@@ -3,13 +3,10 @@ package model;
 import java.util.ArrayList;
 
 public class ModelNotifierHandler {
-
     private ArrayList<ModelVideoGameWikiListener> listeners;
-
     public ModelNotifierHandler(){
         listeners = new ArrayList<>();
     }
-
     public void notifyParcialSearchHasFinished() {
         for (ModelVideoGameWikiListener listener: listeners) {
             listener.parcialSearchHasFinished();
@@ -43,7 +40,6 @@ public class ModelNotifierHandler {
     public void addListener(ModelVideoGameWikiListener listener) {
         listeners.add(listener);
     }
-
     public void notifyHistorySaveFinished() {
         for (ModelVideoGameWikiListener listener: listeners) {
             listener.historySaveHasFinished();

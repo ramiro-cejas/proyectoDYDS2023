@@ -48,10 +48,6 @@ public interface ModelVideoGameWikiInterface {
 
     void setParcialResults(JsonArray parcialResults);
 
-    WikipediaSearchAPI getWikipediaSearchAPI();
-
-    void setWikipediaSearchAPI(WikipediaSearchAPI wikipediaSearchAPI);
-
     WikipediaPageAPI getWikipediaPageAPI();
 
     void setWikipediaPageAPI(WikipediaPageAPI wikipediaPageAPI);
