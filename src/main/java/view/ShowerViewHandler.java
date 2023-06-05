@@ -20,6 +20,7 @@ public class ShowerViewHandler {
 
     void showPartialResults() {
         JsonArray jsonOfPartialResults = viewVideoGameWikiLogic.getModelVideoGameWiki().getParcialResults();
+        viewVideoGameWikiLogic.searchOptionsMenu.removeAll();
         for (JsonElement jsonElementOfPartialResult : jsonOfPartialResults) {
             JsonObject jsonObjectOfPartialResult = jsonElementOfPartialResult.getAsJsonObject();
             SearchResult searchResult = getSearchResult(jsonObjectOfPartialResult);

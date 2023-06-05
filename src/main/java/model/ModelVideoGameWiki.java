@@ -4,13 +4,10 @@ import com.google.gson.JsonArray;
 import utils.DataBase;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
-import utils.WikipediaSearchAPI;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
-    private final ModelSaveHandler modelSaveHandler = new ModelSaveHandler(this);
-    private final ModelSearchHandler modelSearchHandler = new ModelSearchHandler(this);
+    private final ModelSaveHandler modelSaveHandler;
+    private final ModelSearchHandler modelSearchHandler;
     private final ModelNotifierHandler modelNotifierHandler;
     private String selectedResultTitle = null;
     private String selectedResult = null;
@@ -28,6 +25,8 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     public String getStoredResultExtract() { return storedResultExtract; }
     public ModelVideoGameWiki() {
         modelNotifierHandler = new ModelNotifierHandler();
+        modelSaveHandler = new ModelSaveHandler(this);
+        modelSearchHandler = new ModelSearchHandler(this);
         setUpModel();
     }
 

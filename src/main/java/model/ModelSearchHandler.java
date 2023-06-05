@@ -20,7 +20,7 @@ public class ModelSearchHandler {
                 .baseUrl("https://en.wikipedia.org/w/")
                 .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
-        wikipediaPageAPI = retrofit.create(WikipediaPageAPI.class);
+        this.wikipediaPageAPI = retrofit.create(WikipediaPageAPI.class);
     }
 
     void searchTerm(String termToSearch) {

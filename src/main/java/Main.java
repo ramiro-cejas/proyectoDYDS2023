@@ -1,5 +1,6 @@
 import controller.ControllerVideoGameWiki;
 import model.ModelVideoGameWiki;
+import utils.WikipediaPageAPI;
 
 public class Main {
 
