@@ -1,7 +1,5 @@
 package model;
 
-import com.google.gson.Gson;
-import com.google.gson.JsonObject;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
@@ -9,12 +7,12 @@ import utils.SearchResult;
 import utils.WikipediaPageAPI;
 
 public class ModelSearchHandler {
-    private final ModelVideoGameWiki modelVideoGameWiki;
+    private final ModelVideoGameWikiInterface modelVideoGameWiki;
     private final ResponseHandler responseHandler = new ResponseHandler(this);
 
     private WikipediaPageAPI wikipediaPageAPI;
 
-    ModelSearchHandler(ModelVideoGameWiki modelVideoGameWiki) {
+    ModelSearchHandler(ModelVideoGameWikiInterface modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://en.wikipedia.org/w/")
@@ -30,8 +28,7 @@ public class ModelSearchHandler {
             modelVideoGameWiki.setParcialResults(ResponseHandler.getQueryAsJsonObject(callForSearchResponse).get("search").getAsJsonArray());
             modelVideoGameWiki.getModelNotifier().notifyParcialSearchHasFinished();
         } catch (Exception e) {
-            //TODO Todos los catch evaluar ponerlos en un listener en la vista con un ExceptionListener
-            System.out.println(e.getMessage());
+            modelVideoGameWiki.getModelNotifier().notifyExceptionSearchTerm();
         }
     }
 
@@ -41,7 +38,7 @@ public class ModelSearchHandler {
             responseHandler.processResponseByID(callForPageResponse);
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            modelVideoGameWiki.getModelNotifier().notifyExceptionSearchByID();
         }
     }
 
@@ -49,10 +46,10 @@ public class ModelSearchHandler {
         try {
             Response<String> callForPageResponse = wikipediaPageAPI.getExtractByPageID(searchResult.pageID).execute();
             responseHandler.processResponseByID(callForPageResponse);
-            modelVideoGameWiki.getModelSaveHandler().saveHistoryOfTermSearcherd(searchResult.title, searchTerm, searchResult.pageID);
+            modelVideoGameWiki.getModelSaveHandler().saveHistoryOfTermSearched(searchResult.title, searchTerm, searchResult.pageID);
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {
-            System.out.println(e.getMessage());
+            modelVideoGameWiki.getModelNotifier().notifyExceptionSearchByID();
         }
     }
 

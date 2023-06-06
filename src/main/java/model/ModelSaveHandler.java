@@ -2,20 +2,30 @@ package model;
 
 import utils.DataBase;
 
-public class ModelSaveHandler {
-    private final ModelVideoGameWiki modelVideoGameWiki;
+import java.sql.SQLException;
 
-    ModelSaveHandler(ModelVideoGameWiki modelVideoGameWiki) {
+public class ModelSaveHandler {
+    private final ModelVideoGameWikiInterface modelVideoGameWiki;
+
+    ModelSaveHandler(ModelVideoGameWikiInterface modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
     }
 
-    void saveHistoryOfTermSearcherd(String title, String searchTerm, String pageId) {
-        DataBase.historySave(title, searchTerm, pageId);
+    void saveHistoryOfTermSearched(String title, String searchTerm, String pageId) {
+        try {
+            DataBase.historySave(title, searchTerm, pageId);
+        } catch (SQLException e) {
+            modelVideoGameWiki.getModelNotifier().notifyExceptionSQL();
+        }
         modelVideoGameWiki.getModelNotifier().notifyHistorySaveFinished();
     }
 
     void saveSearchedResult(String resultBody) {
-        DataBase.saveInfo(modelVideoGameWiki.getSelectedResultTitle(), resultBody);
+        try {
+            DataBase.saveInfo(modelVideoGameWiki.getSelectedResultTitle(), resultBody);
+        } catch (SQLException e) {
+            modelVideoGameWiki.getModelNotifier().notifyExceptionSQL();
+        }
         modelVideoGameWiki.getModelNotifier().notifySaveSearchedResultFinish();
     }
 }

@@ -1,7 +1,9 @@
 package view;
 
+import model.ModelVideoGameWikiExceptionListener;
 import model.ModelVideoGameWikiListener;
 
+import java.sql.SQLException;
 import java.util.Objects;
 
 public class ListenerHandler {
@@ -30,9 +32,9 @@ public class ListenerHandler {
         viewVideoGameWikiLogic.getComboBoxHistory().addActionListener(actionEvent -> {
             viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventSelectHistory(Objects.requireNonNull(viewVideoGameWikiLogic.getComboBoxHistory().getSelectedItem()).toString());
         });
-        viewVideoGameWikiLogic.getModelVideoGameWiki().addListener(new ModelVideoGameWikiListener() {
+        viewVideoGameWikiLogic.getModelVideoGameWiki().addCommonListener(new ModelVideoGameWikiListener() {
             @Override
-            public void parcialSearchHasFinished() {
+            public void partialSearchHasFinished() {
                 viewVideoGameWikiLogic.showPartialResults();
                 viewVideoGameWikiLogic.setWaitingStatus();
             }
@@ -45,7 +47,11 @@ public class ListenerHandler {
 
             @Override
             public void saveHasFinished() {
-                viewVideoGameWikiLogic.updateStoredComboBox();
+                try {
+                    viewVideoGameWikiLogic.updateStoredComboBox();
+                } catch (SQLException e) {
+                    viewVideoGameWikiLogic.getPopUpHandler().showSQLException();
+                }
                 viewVideoGameWikiLogic.getTextPaneStored().setText("");
                 viewVideoGameWikiLogic.getPopUpHandler().showSavedFinished();
             }
@@ -57,7 +63,11 @@ public class ListenerHandler {
 
             @Override
             public void deleteFinished() {
-                viewVideoGameWikiLogic.updateStoredComboBox();
+                try {
+                    viewVideoGameWikiLogic.updateStoredComboBox();
+                } catch (SQLException e) {
+                    viewVideoGameWikiLogic.getPopUpHandler().showSQLException();
+                }
                 viewVideoGameWikiLogic.getTextPaneStored().setText("");
                 viewVideoGameWikiLogic.getPopUpHandler().showDeleteFinished();
             }
@@ -69,7 +79,27 @@ public class ListenerHandler {
 
             @Override
             public void historySaveHasFinished() {
-                viewVideoGameWikiLogic.updateHistoryComboBox();
+                try {
+                    viewVideoGameWikiLogic.updateHistoryComboBox();
+                } catch (SQLException e) {
+                    viewVideoGameWikiLogic.getPopUpHandler().showSQLException();
+                }
+            }
+        });
+        viewVideoGameWikiLogic.getModelVideoGameWiki().addExceptionListener(new ModelVideoGameWikiExceptionListener() {
+            @Override
+            public void searchTermExceptionHasOcurred() {
+                viewVideoGameWikiLogic.getPopUpHandler().showSearchException();
+            }
+
+            @Override
+            public void searchByIDExceptionHasOcurred() {
+                viewVideoGameWikiLogic.getPopUpHandler().showSearchByIDException();
+            }
+
+            @Override
+            public void sqlExceptionHasOcurred() {
+                viewVideoGameWikiLogic.getPopUpHandler().showSQLException();
             }
         });
     }

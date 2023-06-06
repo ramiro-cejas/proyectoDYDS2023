@@ -12,6 +12,14 @@ public class ShowerViewHandler {
         this.viewVideoGameWikiLogic = viewVideoGameWikiLogic;
     }
 
+    private static SearchResult getSearchResult(JsonObject jsonObject) {
+        String searchResultTitle = jsonObject.get("title").getAsString();
+        String searchResultPageId = jsonObject.get("pageid").getAsString();
+        String searchResultSnippet = jsonObject.get("snippet").getAsString();
+
+        return new SearchResult(searchResultTitle, searchResultPageId, searchResultSnippet);
+    }
+
     void showResult() {
         viewVideoGameWikiLogic.getTabbedPane().setSelectedIndex(1);
         viewVideoGameWikiLogic.getTextPaneResult().setText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult());
@@ -35,13 +43,5 @@ public class ShowerViewHandler {
             viewVideoGameWikiLogic.setWorkingStatus();
             viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventSearchSelectedResult(searchResult, viewVideoGameWikiLogic.getTextFieldSearchTerm().getText());
         });
-    }
-
-    private static SearchResult getSearchResult(JsonObject jsonObject) {
-        String searchResultTitle = jsonObject.get("title").getAsString();
-        String searchResultPageId = jsonObject.get("pageid").getAsString();
-        String searchResultSnippet = jsonObject.get("snippet").getAsString();
-
-        return new SearchResult(searchResultTitle, searchResultPageId, searchResultSnippet);
     }
 }

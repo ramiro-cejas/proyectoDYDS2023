@@ -16,7 +16,7 @@ public class ControllerStoredHandler {
         thread.start();
     }
 
-    public void onEventUpdateStroredResult(String titleToUpdate, String bodyToUpdate) {
+    public void onEventUpdateStoredResult(String titleToUpdate, String bodyToUpdate) {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().updateStoredResult(titleToUpdate, bodyToUpdate);

@@ -3,6 +3,7 @@ package view;
 import utils.DataBase;
 
 import javax.swing.*;
+import java.sql.SQLException;
 
 public class UpdaterViewHandler {
     private final ViewVideoGameWikiLogic viewVideoGameWikiLogic;
@@ -11,15 +12,15 @@ public class UpdaterViewHandler {
         this.viewVideoGameWikiLogic = viewVideoGameWikiLogic;
     }
 
-    void updateHistoryComboBox() {
-        viewVideoGameWikiLogic.getComboBoxHistory().setModel(new DefaultComboBoxModel<Object>(DataBase.getHistory().stream().toArray()));
+    void updateHistoryComboBox() throws SQLException {
+        viewVideoGameWikiLogic.getComboBoxHistory().setModel(new DefaultComboBoxModel<Object>(DataBase.getHistory().toArray()));
     }
 
     void updateStoredExtract() {
         viewVideoGameWikiLogic.getTextPaneStored().setText(viewVideoGameWikiLogic.getModelVideoGameWiki().getStoredResultExtract());
     }
 
-    public void updateStoredComboBox() {
-        viewVideoGameWikiLogic.getComboBoxStored().setModel(new DefaultComboBoxModel<Object>(DataBase.getTitles().stream().toArray()));
+    public void updateStoredComboBox() throws SQLException {
+        viewVideoGameWikiLogic.getComboBoxStored().setModel(new DefaultComboBoxModel<Object>(DataBase.getTitles().toArray()));
     }
 }

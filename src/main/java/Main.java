@@ -1,11 +1,11 @@
 import controller.ControllerVideoGameWiki;
 import model.ModelVideoGameWiki;
-import utils.WikipediaPageAPI;
+import model.ModelVideoGameWikiInterface;
 
 public class Main {
 
     public static void main(String[] args) {
-        ModelVideoGameWiki model = new ModelVideoGameWiki();
+        ModelVideoGameWikiInterface model = new ModelVideoGameWiki();
         ControllerVideoGameWiki controller = new ControllerVideoGameWiki(model);
         controller.start();
     }

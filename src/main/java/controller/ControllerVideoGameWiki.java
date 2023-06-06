@@ -2,19 +2,18 @@ package controller;
 
 import model.ModelVideoGameWikiInterface;
 import utils.SearchResult;
-import model.ModelVideoGameWiki;
 import view.ViewVideoGameWiki;
 import view.ViewVideoGameWikiInterface;
 
 public class ControllerVideoGameWiki {
-    private final ModelVideoGameWiki modelVideoGameWiki;
+    private final ModelVideoGameWikiInterface modelVideoGameWiki;
     private final ControllerSearchHandler controllerSearchHandler = new ControllerSearchHandler(this);
     private final ControllerStoredHandler controllerStoredHandler = new ControllerStoredHandler(this);
     private final ControllerSelectHandler controllerSelectHandler = new ControllerSelectHandler(this);
     private final ControllerHistoryHandler controllerHistoryHandler = new ControllerHistoryHandler(this);
     private ViewVideoGameWikiInterface viewVideoGameWiki;
 
-    public ControllerVideoGameWiki(ModelVideoGameWiki modelVideoGameWiki) {
+    public ControllerVideoGameWiki(ModelVideoGameWikiInterface modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
     }
 
@@ -44,7 +43,7 @@ public class ControllerVideoGameWiki {
     }
 
     public void onEventUpdateStroredResult(String titleToUpdate, String bodyToUpdate) {
-        controllerStoredHandler.onEventUpdateStroredResult(titleToUpdate, bodyToUpdate);
+        controllerStoredHandler.onEventUpdateStoredResult(titleToUpdate, bodyToUpdate);
     }
 
     public void onEventSelectHistory(String elementOfHistoryComboBox) {

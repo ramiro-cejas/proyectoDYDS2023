@@ -2,6 +2,8 @@ package controller;
 
 import utils.DataBase;
 
+import java.sql.SQLException;
+
 public class ControllerSelectHandler {
     private final ControllerVideoGameWiki controllerVideoGameWiki;
 
@@ -22,7 +24,11 @@ public class ControllerSelectHandler {
         String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\.");
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
-            controllerVideoGameWiki.getModelVideoGameWiki().searchTermByPageId(DataBase.getPageIdFromSavedHistorySearch(Integer.parseInt(arrayOfSplitedString[0])));
+            try {
+                controllerVideoGameWiki.getModelVideoGameWiki().searchTermByPageId(DataBase.getPageIdFromSavedHistorySearch(Integer.parseInt(arrayOfSplitedString[0])));
+            } catch (SQLException e) {
+                controllerVideoGameWiki.getViewVideoGameWiki().getPopUPHandler().showSQLException();
+            }
             controllerVideoGameWiki.getViewVideoGameWiki().setWaitingStatus();
         }));
         thread.start();

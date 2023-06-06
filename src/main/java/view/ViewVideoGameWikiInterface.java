@@ -16,9 +16,11 @@ public interface ViewVideoGameWikiInterface {
 
     String getSelectedHistoryItem();
 
-    void setSelectedStoredItem(String item);
-
     void setSelectedHistoryItem(String item);
 
+    void setSelectedStoredItem(String item);
+
     void pressSearchButton();
+
+    PopUPHandler getPopUPHandler();
 }

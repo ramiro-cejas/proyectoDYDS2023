@@ -15,6 +15,19 @@ public class ResponseHandler {
         this.modelSearchHandler = modelSearchHandler;
     }
 
+    static JsonObject transformResponseToJsonObject(JsonObject query) {
+        JsonObject pages = query.get("pages").getAsJsonObject();
+        Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
+        Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
+        return first.getValue().getAsJsonObject();
+    }
+
+    public static JsonObject getQueryAsJsonObject(Response<String> callForPageResponse) {
+        Gson gson = new Gson();
+        JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
+        return jobj.get("query").getAsJsonObject();
+    }
+
     void processResponseByID(Response<String> callForPageResponse) {
 
         JsonObject page = transformResponseToJsonObject(getQueryAsJsonObject(callForPageResponse));
@@ -24,25 +37,10 @@ public class ResponseHandler {
         } else {
             JsonElement searchResultTitle = page.get("title");
             modelSearchHandler.getModelVideoGameWiki().setSelectedResultTitle(searchResultTitle.getAsString().replace("\\n", "\n"));
-
+            modelSearchHandler.getModelVideoGameWiki().setSelectedResultExctract(searchResultExtract.getAsString().replace("\\n", "\n"));
             modelSearchHandler.getModelVideoGameWiki().setSelectedResult("<h1 face=\"roboto\" color=\"white\">" + searchResultTitle.getAsString().replace("\\n", "\n") + "</h1>");
             modelSearchHandler.getModelVideoGameWiki().setSelectedResult(modelSearchHandler.getModelVideoGameWiki().getSelectedResult() + "<font face=\"roboto\" color=\"white\">" + searchResultExtract.getAsString().replace("\\n", "\n") + "</font>");
             modelSearchHandler.getModelVideoGameWiki().setSelectedResult(TextHandler.textToHtml(modelSearchHandler.getModelVideoGameWiki().getSelectedResult()));
         }
-    }
-
-    static JsonObject transformResponseToJsonObject(JsonObject query) {
-        JsonObject pages = query.get("pages").getAsJsonObject();
-        Set<Map.Entry<String, JsonElement>> pagesSet = pages.entrySet();
-        Map.Entry<String, JsonElement> first = pagesSet.iterator().next();
-        JsonObject page = first.getValue().getAsJsonObject();
-        return page;
-    }
-
-    public static JsonObject getQueryAsJsonObject(Response<String> callForPageResponse) {
-        Gson gson = new Gson();
-        JsonObject jobj = gson.fromJson(callForPageResponse.body(), JsonObject.class);
-        JsonObject query = jobj.get("query").getAsJsonObject();
-        return query;
     }
 }

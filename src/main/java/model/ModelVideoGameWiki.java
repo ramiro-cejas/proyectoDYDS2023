@@ -5,24 +5,18 @@ import utils.DataBase;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
 
+import java.sql.SQLException;
+
 public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private final ModelSaveHandler modelSaveHandler;
     private final ModelSearchHandler modelSearchHandler;
     private final ModelNotifierHandler modelNotifierHandler;
-    private String selectedResultTitle = null;
+    private String selectedResultTitleRaw = null;
     private String selectedResult = null;
+    private String selectedExtractRaw = null;
     private String storedResultExtract = null;
     private JsonArray parcialResults = null;
-    @Override
-    public void addListener(ModelVideoGameWikiListener listener) { modelNotifierHandler.addListener(listener); }
-    @Override
-    public String getLastSearchResultTitle() { return selectedResultTitle;  }
-    @Override
-    public String getLastSearchResult() { return selectedResult;  }
-    @Override
-    public JsonArray getParcialResults() { return parcialResults;  }
-    @Override
-    public String getStoredResultExtract() { return storedResultExtract; }
+
     public ModelVideoGameWiki() {
         modelNotifierHandler = new ModelNotifierHandler();
         modelSaveHandler = new ModelSaveHandler(this);
@@ -30,19 +24,70 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
         setUpModel();
     }
 
-    private void setUpModel(){
-        DataBase.loadDatabase();
+    @Override
+    public void addCommonListener(ModelVideoGameWikiListener listener) {
+        modelNotifierHandler.addCommonListener(listener);
     }
+
+    @Override
+    public void addExceptionListener(ModelVideoGameWikiExceptionListener listener) {
+        modelNotifierHandler.addExceptionListener(listener);
+    }
+
+    @Override
+    public String getSelectedResultTitle() {
+        return selectedResultTitleRaw;
+    }
+
+    @Override
+    public void setSelectedResultTitle(String selectedResultTitleRaw) {
+        this.selectedResultTitleRaw = selectedResultTitleRaw;
+    }
+
+    public String getSelectedResultExtract() {
+        return selectedExtractRaw;
+    }
+
+    @Override
+    public String getLastSearchResult() {
+        return selectedResult;
+    }
+
+    @Override
+    public JsonArray getParcialResults() {
+        return parcialResults;
+    }
+
+    @Override
+    public void setParcialResults(JsonArray parcialResults) {
+        this.parcialResults = parcialResults;
+    }
+
+    @Override
+    public String getStoredResultExtract() {
+        return storedResultExtract;
+    }
+
+    private void setUpModel() {
+        try {
+            DataBase.loadDatabase();
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
+    }
+
     @Override
     public void searchTerm(String termToSearch) {
         modelSearchHandler.searchTerm(termToSearch);
     }
+
     @Override
-    public void searchTermByPageId(String pageId){
+    public void searchTermByPageId(String pageId) {
         modelSearchHandler.searchTermByPageId(pageId);
     }
+
     @Override
-    public void searchSelectedTerm(SearchResult searchResult, String searchTerm){
+    public void searchSelectedTerm(SearchResult searchResult, String searchTerm) {
         modelSearchHandler.searchSelectedTerm(searchResult, searchTerm);
     }
 
@@ -53,19 +98,34 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     @Override
     public void updateStoredResult(String title, String body) {
-        DataBase.saveInfo(title, body);
+        try {
+            DataBase.saveInfo(title, body);
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
         modelNotifierHandler.notifyUpdateStoredFinish();
     }
+
     @Override
     public void deleteStoredResult(String titleStored) {
-        DataBase.deleteEntry(titleStored);
+        try {
+            DataBase.deleteEntry(titleStored);
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
         notifyDeleteStoredFinish();
     }
+
     @Override
     public void searchStoredResult(String titleStored) {
-        storedResultExtract = DataBase.getExtract(titleStored);
+        try {
+            storedResultExtract = DataBase.getExtract(titleStored);
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
         modelNotifierHandler.notifySearchForStoredFinish();
     }
+
     @Override
     public void saveSearchedResult(String resultBody) {
         modelSaveHandler.saveSearchedResult(resultBody);
@@ -87,13 +147,8 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     }
 
     @Override
-    public String getSelectedResultTitle() {
-        return selectedResultTitle;
-    }
-
-    @Override
-    public void setSelectedResultTitle(String selectedResultTitle) {
-        this.selectedResultTitle = selectedResultTitle;
+    public void setSelectedResultExctract(String selectedExctractRaw) {
+        this.selectedExtractRaw = selectedExctractRaw;
     }
 
     @Override
@@ -104,11 +159,6 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     @Override
     public void setSelectedResult(String selectedResult) {
         this.selectedResult = selectedResult;
-    }
-
-    @Override
-    public void setParcialResults(JsonArray parcialResults) {
-        this.parcialResults = parcialResults;
     }
 
     @Override

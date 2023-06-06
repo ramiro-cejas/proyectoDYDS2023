@@ -3,16 +3,17 @@ package model;
 import com.google.gson.JsonArray;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
-import utils.WikipediaSearchAPI;
 
 public interface ModelVideoGameWikiInterface {
-    void addListener(ModelVideoGameWikiListener listener);
+    void addCommonListener(ModelVideoGameWikiListener listener);
 
-    String getLastSearchResultTitle();
+    void addExceptionListener(ModelVideoGameWikiExceptionListener listener);
 
     String getLastSearchResult();
 
     JsonArray getParcialResults();
+
+    void setParcialResults(JsonArray parcialResults);
 
     String getStoredResultExtract();
 
@@ -40,13 +41,15 @@ public interface ModelVideoGameWikiInterface {
 
     String getSelectedResultTitle();
 
-    void setSelectedResultTitle(String selectedResultTitle);
+    void setSelectedResultTitle(String selectedResultTitleRaw);
+
+    void setSelectedResultExctract(String selectedExctractRaw);
+
+    String getSelectedResultExtract();
 
     String getSelectedResult();
 
     void setSelectedResult(String selectedResult);
-
-    void setParcialResults(JsonArray parcialResults);
 
     WikipediaPageAPI getWikipediaPageAPI();
 

@@ -1,7 +1,9 @@
 package model;
+
 public interface ModelVideoGameWikiListener {
 
-    void parcialSearchHasFinished();
+    void partialSearchHasFinished();
+
     void queryHasFinished();
 
     void saveHasFinished();

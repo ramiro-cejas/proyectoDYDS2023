@@ -5,136 +5,100 @@ import java.util.ArrayList;
 import java.util.Date;
 
 public class DataBase {
-  private static String url = "jdbc:sqlite:./dictionary.db";
-  public static void loadDatabase() {
-      excecuteGivenUpdate("create table if not exists catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
-      excecuteGivenUpdate("create table if not exists history (id INTEGER PRIMARY KEY AUTOINCREMENT, searchTerm string ,title string, date timestamp, pageId string)");
-  }
-  public static void testDB() {
-    Connection connection = openConnection();
-    try {
-      ResultSet rs = excecuteGivenQuery(connection,"select * from catalog");
-      while(rs.next()) {
-        System.out.println("id = " + rs.getInt("id"));
-        System.out.println("title = " + rs.getString("title"));
-        System.out.println("extract = " + rs.getString("extract"));
-        System.out.println("source = " + rs.getString("source"));
-      }
+    public static void loadDatabase() throws SQLException {
+        excecuteGivenUpdate("create table if not exists catalog (id INTEGER, title string PRIMARY KEY, extract string, source integer)");
+        excecuteGivenUpdate("create table if not exists history (id INTEGER PRIMARY KEY AUTOINCREMENT, searchTerm string ,title string, date timestamp, pageId string)");
     }
-    catch(SQLException e) {
-      System.out.println(e.getMessage());
+
+    private static Connection openConnection() throws SQLException {
+        Connection connection;
+        String url = "jdbc:sqlite:./dictionary.db";
+        connection = DriverManager.getConnection(url);
+
+        return connection;
     }
-    closeConnection(connection);
-  }
-  private static Connection openConnection() {
-    Connection connection = null;
-    try {
-      connection = DriverManager.getConnection(url);
-    }catch (SQLException e){
-      System.out.println(e.getMessage());
+
+    private static void closeConnection(Connection connection) throws SQLException {
+        if (connection != null)
+            connection.close();
     }
-    return connection;
-  }
-  private static void closeConnection(Connection connection) {
-    try {
-      if(connection != null)
-        connection.close();
+
+    private static ResultSet excecuteGivenQuery(Connection connection, String query) throws SQLException {
+        ResultSet resultSetToReturn;
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30);
+        resultSetToReturn = statement.executeQuery(query);
+        return resultSetToReturn;
     }
-    catch(SQLException e) {
-      System.err.println(e.getMessage());
+
+    private static void excecuteGivenUpdate(String query) throws SQLException {
+        Connection connection = openConnection();
+        Statement statement = connection.createStatement();
+        statement.setQueryTimeout(30);
+        statement.executeUpdate(query);
+        closeConnection(connection);
     }
-  }
-  private static ResultSet excecuteGivenQuery(Connection connection, String query){
-    ResultSet resultSetToReturn = null;
-    try {
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);
-      resultSetToReturn = statement.executeQuery(query);
-    }catch (SQLException e){
-      System.out.println(e.getMessage());
+
+    public static ArrayList<String> getTitles() throws SQLException {
+        ArrayList<String> titles = new ArrayList<>();
+        Connection connection = openConnection();
+        ResultSet resultSet = excecuteGivenQuery(connection, "select * from catalog");
+
+        while (resultSet.next()) titles.add(resultSet.getString("title"));
+
+        closeConnection(connection);
+        return titles;
     }
-    return resultSetToReturn;
-  }
-  private static void excecuteGivenUpdate(String query){
-    Connection connection = openConnection();
-    try {
-      Statement statement = connection.createStatement();
-      statement.setQueryTimeout(30);
-      statement.executeUpdate(query);
-    }catch (SQLException e){
-      System.out.println(e.getMessage());
+
+    public static void saveInfo(String title, String extract) throws SQLException {
+        excecuteGivenUpdate("replace into catalog values(null, '" + title + "', '" + extract + "', 1)");
     }
-    closeConnection(connection);
-  }
-  public static ArrayList<String> getTitles() {
-    ArrayList<String> titles = new ArrayList<>();
-    Connection connection = openConnection();
-    ResultSet resultSet = excecuteGivenQuery(connection,"select * from catalog");
-    try {
-      while(resultSet.next()) titles.add(resultSet.getString("title"));
-    } catch (SQLException e){
-      System.out.println(e.getMessage());
+
+    public static String getExtract(String title) throws SQLException {
+        String extractToReturn;
+        Connection connection = openConnection();
+
+        ResultSet rs = excecuteGivenQuery(connection, "select * from catalog WHERE title = '" + title + "'");
+        rs.next();
+        extractToReturn = rs.getString("extract");
+
+        closeConnection(connection);
+        return extractToReturn;
     }
-    closeConnection(connection);
-    return titles;
-  }
-  public static void saveInfo(String title, String extract) {
-    excecuteGivenUpdate("replace into catalog values(null, '"+ title + "', '"+ extract + "', 1)");
-  }
-  public static String getExtract(String title) {
-    String extractToReturn = null;
-    Connection connection = openConnection();
-    try {
-      ResultSet rs = excecuteGivenQuery(connection,"select * from catalog WHERE title = '" + title + "'" );
-      rs.next();
-      extractToReturn = rs.getString("extract");
+
+    public static void deleteEntry(String title) throws SQLException {
+        excecuteGivenUpdate("DELETE FROM catalog WHERE title = '" + title + "'");
     }
-    catch(SQLException e) {
-      System.err.println("Get title error " + e.getMessage());
+
+    public static void historySave(String title, String searchTerm, String pageId) throws SQLException {
+        Date today = new Date();
+        Timestamp timestampNow = new Timestamp(today.getTime());
+        excecuteGivenUpdate("replace into history values(null, '" + title + "', '" + searchTerm + "', '" + timestampNow + "', '" + pageId + "')");
     }
-    closeConnection(connection);
-    return extractToReturn;
-  }
-  public static void deleteEntry(String title) {
-    excecuteGivenUpdate("DELETE FROM catalog WHERE title = '" + title + "'" );
-  }
-  public static void historySave(String title, String searchTerm, String pageId){
-    Date today = new Date();
-    Timestamp timestampNow = new Timestamp(today.getTime());
-    excecuteGivenUpdate("replace into history values(null, '" + title + "', '"+ searchTerm + "', '" + timestampNow + "', '"+pageId+"')");
-  }
-  public static ArrayList<String> getHistory() {
-    ArrayList<String> entriesOfHistory = new ArrayList<>();
-    Connection connection = openConnection();
-    try {
-      ResultSet rs = excecuteGivenQuery(connection,"select * from history");
-      while(rs.next()) {
-        String idOfSearchedTermEntry = rs.getString("id");
-        String titleOfSearched = rs.getString("title");
-        String searchedTerm = rs.getString("searchTerm");
-        String dateOfSearch = rs.getTimestamp("date").toString();
-        System.out.println(idOfSearchedTermEntry + ". " +dateOfSearch + " | " + searchedTerm + " | " +titleOfSearched);
-        entriesOfHistory.add(idOfSearchedTermEntry + ". " +dateOfSearch + " | " + searchedTerm + " | " +titleOfSearched);
-      }
+
+    public static ArrayList<String> getHistory() throws SQLException {
+        ArrayList<String> entriesOfHistory = new ArrayList<>();
+        Connection connection = openConnection();
+        ResultSet rs = excecuteGivenQuery(connection, "select * from history");
+        while (rs.next()) {
+            String idOfSearchedTermEntry = rs.getString("id");
+            String titleOfSearched = rs.getString("title");
+            String searchedTerm = rs.getString("searchTerm");
+            String dateOfSearch = rs.getTimestamp("date").toString();
+            entriesOfHistory.add(idOfSearchedTermEntry + ". " + dateOfSearch + " | " + searchedTerm + " | " + titleOfSearched);
+        }
+
+        closeConnection(connection);
+        return entriesOfHistory;
     }
-    catch(SQLException e) {
-      System.err.println(e.getMessage());
+
+    public static String getPageIdFromSavedHistorySearch(int id) throws SQLException {
+        String pageIdToReturn;
+        Connection connection = openConnection();
+        ResultSet rs = excecuteGivenQuery(connection, "select * from history WHERE id = '" + id + "'");
+        rs.next();
+        pageIdToReturn = rs.getString("pageId");
+        closeConnection(connection);
+        return pageIdToReturn;
     }
-    closeConnection(connection);
-    return entriesOfHistory;
-  }
-  public static String getPageIdFromSavedHistorySearch(int id) {
-    String pageIdToReturn = null;
-    Connection connection = openConnection();
-    try {
-      ResultSet rs = excecuteGivenQuery(connection,"select * from history WHERE id = '" + id + "'" );
-      rs.next();
-      pageIdToReturn = rs.getString("pageId");
-    }
-    catch(SQLException e) {
-      System.err.println("Get title error " + e.getMessage());
-    }
-    closeConnection(connection);
-    return pageIdToReturn;
-  }
 }

@@ -1,16 +1,18 @@
 package view;
 
 import controller.ControllerVideoGameWiki;
-import model.ModelVideoGameWiki;
+import model.ModelVideoGameWikiInterface;
+
+import java.sql.SQLException;
 
 public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
-    private final ModelVideoGameWiki modelVideoGameWiki;
+    private final ModelVideoGameWikiInterface modelVideoGameWiki;
     private final ControllerVideoGameWiki controllerVideoGameWiki;
     private final UpdaterViewHandler updaterViewHandler = new UpdaterViewHandler(this);
     private final ShowerViewHandler showerViewHandler = new ShowerViewHandler(this);
     private PopUPHandler popUpHandler;
 
-    public ViewVideoGameWikiLogic(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWiki modelVideoGame) {
+    public ViewVideoGameWikiLogic(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
         this.controllerVideoGameWiki = controllerVideoGame;
         this.modelVideoGameWiki = modelVideoGame;
         setUp();
@@ -19,9 +21,13 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
     private void setUp() {
         ListenerHandler listenerHandler = new ListenerHandler(this);
         listenerHandler.initListeners();
-        updaterViewHandler.updateStoredComboBox();
-        updaterViewHandler.updateHistoryComboBox();
         popUpHandler = new PopUPHandler(contentPane);
+        try {
+            updaterViewHandler.updateStoredComboBox();
+            updaterViewHandler.updateHistoryComboBox();
+        } catch (SQLException e) {
+            popUpHandler.showSQLException();
+        }
     }
 
     void showResult() {
@@ -36,11 +42,11 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
         return textFieldSearchTerm.getText();
     }
 
-    void updateHistoryComboBox() {
+    void updateHistoryComboBox() throws SQLException {
         updaterViewHandler.updateHistoryComboBox();
     }
 
-    public void updateStoredComboBox(){
+    public void updateStoredComboBox() throws SQLException {
         updaterViewHandler.updateStoredComboBox();
     }
 
@@ -52,7 +58,7 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
         return controllerVideoGameWiki;
     }
 
-    public ModelVideoGameWiki getModelVideoGameWiki() {
+    public ModelVideoGameWikiInterface getModelVideoGameWiki() {
         return modelVideoGameWiki;
     }
 
