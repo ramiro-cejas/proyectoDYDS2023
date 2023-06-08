@@ -14,18 +14,20 @@ public class ModelSaveHandler {
     void saveHistoryOfTermSearched(String title, String searchTerm, String pageId) {
         try {
             DataBase.historySave(title, searchTerm, pageId);
+            modelVideoGameWiki.setLastTitleSavedOnHistory(title);
+            modelVideoGameWiki.setLastSearchTermSavedOnHistory(searchTerm);
+            modelVideoGameWiki.getModelNotifier().notifyHistorySaveFinished();
         } catch (SQLException e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSQL();
         }
-        modelVideoGameWiki.getModelNotifier().notifyHistorySaveFinished();
     }
 
     void saveSearchedResult(String resultBody) {
         try {
             DataBase.saveInfo(modelVideoGameWiki.getSelectedResultTitle(), resultBody);
+            modelVideoGameWiki.getModelNotifier().notifySaveSearchedResultFinish();
         } catch (SQLException e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSQL();
         }
-        modelVideoGameWiki.getModelNotifier().notifySaveSearchedResultFinish();
     }
 }

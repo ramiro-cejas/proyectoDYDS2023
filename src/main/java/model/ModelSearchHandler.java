@@ -3,29 +3,23 @@ package model;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import utils.ApiHandler;
+import utils.ResultInPlainText;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
 
 public class ModelSearchHandler {
     private final ModelVideoGameWikiInterface modelVideoGameWiki;
-    private final ResponseHandler responseHandler = new ResponseHandler(this);
-
-    private WikipediaPageAPI wikipediaPageAPI;
+    private ApiHandler apiHandler;
 
     ModelSearchHandler(ModelVideoGameWikiInterface modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://en.wikipedia.org/w/")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-        this.wikipediaPageAPI = retrofit.create(WikipediaPageAPI.class);
+        apiHandler = new ApiHandler();
     }
 
     void searchTerm(String termToSearch) {
-        Response<String> callForSearchResponse;
         try {
-            callForSearchResponse = wikipediaPageAPI.searchForTerm(termToSearch + " articletopic:\"video-games\"").execute();
-            modelVideoGameWiki.setParcialResults(ResponseHandler.getQueryAsJsonObject(callForSearchResponse).get("search").getAsJsonArray());
+            modelVideoGameWiki.setParcialResults(apiHandler.searchForTerm(termToSearch));
             modelVideoGameWiki.getModelNotifier().notifyParcialSearchHasFinished();
         } catch (Exception e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSearchTerm();
@@ -34,8 +28,9 @@ public class ModelSearchHandler {
 
     void searchTermByPageId(String pageId) {
         try {
-            Response<String> callForPageResponse = wikipediaPageAPI.getExtractByPageID(pageId).execute();
-            responseHandler.processResponseByID(callForPageResponse);
+            ResultInPlainText resultInPlainText = apiHandler.getExtractByPageID(pageId);
+            modelVideoGameWiki.setSelectedResultInPlainText(resultInPlainText);
+            modelVideoGameWiki.searchElementsFromHistory();
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSearchByID();
@@ -44,21 +39,22 @@ public class ModelSearchHandler {
 
     void searchSelectedTerm(SearchResult searchResult, String searchTerm) {
         try {
-            Response<String> callForPageResponse = wikipediaPageAPI.getExtractByPageID(searchResult.pageID).execute();
-            responseHandler.processResponseByID(callForPageResponse);
+            ResultInPlainText resultInPlainText = apiHandler.getExtractByPageID(searchResult.pageID);
+            modelVideoGameWiki.setSelectedResultInPlainText(resultInPlainText);
             modelVideoGameWiki.getModelSaveHandler().saveHistoryOfTermSearched(searchResult.title, searchTerm, searchResult.pageID);
+            modelVideoGameWiki.searchElementsFromHistory();
             modelVideoGameWiki.getModelNotifier().notifyQueryHasFinished();
         } catch (Exception e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSearchByID();
         }
     }
 
-    public WikipediaPageAPI getWikipediaPageAPI() {
-        return wikipediaPageAPI;
+    public ApiHandler getApiHandler() {
+        return apiHandler;
     }
 
-    public void setWikipediaPageAPI(WikipediaPageAPI wikipediaPageAPI) {
-        this.wikipediaPageAPI = wikipediaPageAPI;
+    public void setApiHandler(ApiHandler apiHandler) {
+        this.apiHandler = apiHandler;
     }
 
     public ModelVideoGameWikiInterface getModelVideoGameWiki() {

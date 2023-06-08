@@ -3,39 +3,39 @@ package view;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
+import model.TextHandler;
+import org.w3c.dom.Text;
+import utils.ResultInPlainText;
 import utils.SearchResult;
 
-public class ShowerViewHandler {
+import java.util.List;
+
+public class ViewShowerHandler {
     private final ViewVideoGameWikiLogic viewVideoGameWikiLogic;
 
-    public ShowerViewHandler(ViewVideoGameWikiLogic viewVideoGameWikiLogic) {
+    public ViewShowerHandler(ViewVideoGameWikiLogic viewVideoGameWikiLogic) {
         this.viewVideoGameWikiLogic = viewVideoGameWikiLogic;
-    }
-
-    private static SearchResult getSearchResult(JsonObject jsonObject) {
-        String searchResultTitle = jsonObject.get("title").getAsString();
-        String searchResultPageId = jsonObject.get("pageid").getAsString();
-        String searchResultSnippet = jsonObject.get("snippet").getAsString();
-
-        return new SearchResult(searchResultTitle, searchResultPageId, searchResultSnippet);
     }
 
     void showResult() {
         viewVideoGameWikiLogic.getTabbedPane().setSelectedIndex(1);
-        viewVideoGameWikiLogic.getTextPaneResult().setText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult());
+        viewVideoGameWikiLogic.getTextPaneResult().setText(TextHandler.doHTMLFromResultInPlainText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult()));
         viewVideoGameWikiLogic.getTextPaneResult().setCaretPosition(0);
     }
 
     void showPartialResults() {
-        JsonArray jsonOfPartialResults = viewVideoGameWikiLogic.getModelVideoGameWiki().getParcialResults();
+        List<ResultInPlainText> resultList = viewVideoGameWikiLogic.getModelVideoGameWiki().getParcialResults();
         viewVideoGameWikiLogic.searchOptionsMenu.removeAll();
-        for (JsonElement jsonElementOfPartialResult : jsonOfPartialResults) {
-            JsonObject jsonObjectOfPartialResult = jsonElementOfPartialResult.getAsJsonObject();
-            SearchResult searchResult = getSearchResult(jsonObjectOfPartialResult);
+        for (ResultInPlainText resultInPlainText : resultList) {
+            SearchResult searchResult = getSearchResult(resultInPlainText);
             viewVideoGameWikiLogic.searchOptionsMenu.add(searchResult);
             setListenersOfOptionsMenu(searchResult);
         }
         viewVideoGameWikiLogic.searchOptionsMenu.show(viewVideoGameWikiLogic.getTextFieldSearchTerm(), viewVideoGameWikiLogic.getTextFieldSearchTerm().getX(), viewVideoGameWikiLogic.getTextFieldSearchTerm().getY());
+    }
+
+    private SearchResult getSearchResult(ResultInPlainText resultInPlainText) {
+        return new SearchResult(resultInPlainText.title,resultInPlainText.pageID,resultInPlainText.snippet);
     }
 
     private void setListenersOfOptionsMenu(SearchResult searchResult) {

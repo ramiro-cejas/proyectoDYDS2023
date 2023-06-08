@@ -5,9 +5,9 @@ import utils.DataBase;
 import java.sql.SQLException;
 
 public class ControllerSelectHandler {
-    private final ControllerVideoGameWiki controllerVideoGameWiki;
+    private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerSelectHandler(ControllerVideoGameWiki controllerVideoGameWiki) {
+    public ControllerSelectHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 

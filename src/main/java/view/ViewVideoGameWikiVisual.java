@@ -21,6 +21,7 @@ public class ViewVideoGameWikiVisual {
     protected final JPopupMenu searchOptionsMenu = new JPopupMenu("Search Results");
 
     public ViewVideoGameWikiVisual() {
+
         textPaneResult.setContentType("text/html");
         textPaneStored.setContentType("text/html");
 

@@ -78,4 +78,16 @@ public class ModelNotifierHandler {
             listener.sqlExceptionHasOcurred();
         }
     }
+
+    public void notifySearchTitlesFromSavedResultsHasFinished() {
+        for (ModelVideoGameWikiListener listener : commonListeners) {
+            listener.searchTitlesFromSavedResultHasFinished();
+        }
+    }
+
+    public void notifySearchFromHistoryHasFinished() {
+        for (ModelVideoGameWikiListener listener : commonListeners) {
+            listener.searchFromHistoryHasFinished();
+        }
+    }
 }

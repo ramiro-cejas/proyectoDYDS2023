@@ -1,6 +1,6 @@
 package view;
 
-import controller.ControllerVideoGameWiki;
+import controller.ControllerVideoGameWikiInterface;
 import model.ModelVideoGameWikiInterface;
 import utils.SearchResult;
 
@@ -8,9 +8,10 @@ import java.util.Arrays;
 import java.util.Objects;
 
 public class ViewVideoGameWiki implements ViewVideoGameWikiInterface {
-    final ViewVideoGameWikiLogic viewLogic;
+    private final ViewVideoGameWikiLogic viewLogic;
 
-    public ViewVideoGameWiki(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
+    public ViewVideoGameWiki(ControllerVideoGameWikiInterface controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
+        controllerVideoGame.setView(this);
         viewLogic = new ViewVideoGameWikiLogic(controllerVideoGame, modelVideoGame);
     }
 
@@ -67,7 +68,12 @@ public class ViewVideoGameWiki implements ViewVideoGameWikiInterface {
     }
 
     @Override
-    public PopUPHandler getPopUPHandler() {
+    public ViewPopUPHandler getPopUPHandler() {
         return viewLogic.getPopUpHandler();
     }
+
+    public ViewVideoGameWikiLogic getViewLogic(){
+        return viewLogic;
+    }
+
 }

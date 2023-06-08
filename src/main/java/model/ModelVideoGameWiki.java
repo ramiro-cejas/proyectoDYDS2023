@@ -1,11 +1,9 @@
 package model;
 
-import com.google.gson.JsonArray;
-import utils.DataBase;
-import utils.SearchResult;
-import utils.WikipediaPageAPI;
+import utils.*;
 
 import java.sql.SQLException;
+import java.util.List;
 
 public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private final ModelSaveHandler modelSaveHandler;
@@ -15,7 +13,34 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private String selectedResult = null;
     private String selectedExtractRaw = null;
     private String storedResultExtract = null;
-    private JsonArray parcialResults = null;
+    private List<ResultInPlainText> parcialResults = null;
+    private Object[] titlesFromSavedResults = null;
+    private Object[] elementsFromHistory = null;
+    private ResultInPlainText selectedResultInPlainText;
+
+    public String getLastTitleSavedOnHistory() {
+        return lastTitleSavedOnHistory;
+    }
+
+    public void setLastTitleSavedOnHistory(String lastTitleSavedOnHistory) {
+        this.lastTitleSavedOnHistory = lastTitleSavedOnHistory;
+    }
+
+    public String getLastSearchTermSavedOnHistory() {
+        return lastSearchTermSavedOnHistory;
+    }
+
+    public void setLastSearchTermSavedOnHistory(String lastSearchTermSavedOnHistory) {
+        this.lastSearchTermSavedOnHistory = lastSearchTermSavedOnHistory;
+    }
+
+    @Override
+    public void setSelectedResultInPlainText(ResultInPlainText resultInPlainText) {
+        this.selectedResultInPlainText = resultInPlainText;
+    }
+
+    String lastTitleSavedOnHistory = null;
+    String lastSearchTermSavedOnHistory = null;
 
     public ModelVideoGameWiki() {
         modelNotifierHandler = new ModelNotifierHandler();
@@ -36,30 +61,30 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     @Override
     public String getSelectedResultTitle() {
-        return selectedResultTitleRaw;
+        return selectedResultInPlainText.title;
     }
 
     @Override
-    public void setSelectedResultTitle(String selectedResultTitleRaw) {
-        this.selectedResultTitleRaw = selectedResultTitleRaw;
+    public void setSelectedResultTitle(String selectedResultTitle) {
+        this.selectedResultInPlainText.title = selectedResultTitle;
     }
 
     public String getSelectedResultExtract() {
-        return selectedExtractRaw;
+        return selectedResultInPlainText.extract;
     }
 
     @Override
-    public String getLastSearchResult() {
-        return selectedResult;
+    public ResultInPlainText getLastSearchResult() {
+        return selectedResultInPlainText;
     }
 
     @Override
-    public JsonArray getParcialResults() {
+    public List<ResultInPlainText> getParcialResults() {
         return parcialResults;
     }
 
     @Override
-    public void setParcialResults(JsonArray parcialResults) {
+    public void setParcialResults(List<ResultInPlainText> parcialResults) {
         this.parcialResults = parcialResults;
     }
 
@@ -162,12 +187,42 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     }
 
     @Override
-    public WikipediaPageAPI getWikipediaPageAPI() {
-        return modelSearchHandler.getWikipediaPageAPI();
+    public ApiHandler getApiHandler() {
+        return modelSearchHandler.getApiHandler();
     }
 
     @Override
-    public void setWikipediaPageAPI(WikipediaPageAPI wikipediaPageAPI) {
-        modelSearchHandler.setWikipediaPageAPI(wikipediaPageAPI);
+    public void setApiHandler(ApiHandler apiHandler) {
+        modelSearchHandler.setApiHandler(apiHandler);
+    }
+
+    @Override
+    public Object[] getTitles() {
+        return titlesFromSavedResults;
+    }
+
+    @Override
+    public Object[] getHistory() {
+        return elementsFromHistory;
+    }
+
+    @Override
+    public void searchTitlesFromSavedResults() {
+        try {
+            titlesFromSavedResults = DataBase.getTitles().toArray();
+            modelNotifierHandler.notifySearchTitlesFromSavedResultsHasFinished();
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
+    }
+
+    @Override
+    public void searchElementsFromHistory() {
+        try {
+            elementsFromHistory = DataBase.getHistory().toArray();
+            modelNotifierHandler.notifySearchFromHistoryHasFinished();
+        } catch (SQLException e) {
+            modelNotifierHandler.notifyExceptionSQL();
+        }
     }
 }

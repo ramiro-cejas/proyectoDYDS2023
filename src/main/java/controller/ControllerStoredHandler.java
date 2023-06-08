@@ -1,9 +1,9 @@
 package controller;
 
 public class ControllerStoredHandler {
-    private final ControllerVideoGameWiki controllerVideoGameWiki;
+    private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerStoredHandler(ControllerVideoGameWiki controllerVideoGameWiki) {
+    public ControllerStoredHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 

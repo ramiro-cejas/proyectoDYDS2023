@@ -1,60 +1,55 @@
 package view;
 
-import controller.ControllerVideoGameWiki;
+import controller.ControllerVideoGameWikiInterface;
 import model.ModelVideoGameWikiInterface;
-
-import java.sql.SQLException;
 
 public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
     private final ModelVideoGameWikiInterface modelVideoGameWiki;
-    private final ControllerVideoGameWiki controllerVideoGameWiki;
-    private final UpdaterViewHandler updaterViewHandler = new UpdaterViewHandler(this);
-    private final ShowerViewHandler showerViewHandler = new ShowerViewHandler(this);
-    private PopUPHandler popUpHandler;
+    private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
+    private final ViewUpdaterHandler viewUpdaterHandler = new ViewUpdaterHandler(this);
+    private final ViewShowerHandler viewShowerHandler = new ViewShowerHandler(this);
+    private ViewPopUPHandler viewPopUpHandler;
+    private String idToSearch = "";
 
-    public ViewVideoGameWikiLogic(ControllerVideoGameWiki controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
+    public ViewVideoGameWikiLogic(ControllerVideoGameWikiInterface controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
         this.controllerVideoGameWiki = controllerVideoGame;
         this.modelVideoGameWiki = modelVideoGame;
         setUp();
     }
 
     private void setUp() {
-        ListenerHandler listenerHandler = new ListenerHandler(this);
-        listenerHandler.initListeners();
-        popUpHandler = new PopUPHandler(contentPane);
-        try {
-            updaterViewHandler.updateStoredComboBox();
-            updaterViewHandler.updateHistoryComboBox();
-        } catch (SQLException e) {
-            popUpHandler.showSQLException();
-        }
+        ViewListenerHandler viewListenerHandler = new ViewListenerHandler(this);
+        viewListenerHandler.initListeners();
+        viewPopUpHandler = new ViewPopUPHandler(contentPane);
+        modelVideoGameWiki.searchTitlesFromSavedResults();
+        modelVideoGameWiki.searchElementsFromHistory();
     }
 
     void showResult() {
-        showerViewHandler.showResult();
+        viewShowerHandler.showResult();
     }
 
     void showPartialResults() {
-        showerViewHandler.showPartialResults();
+        viewShowerHandler.showPartialResults();
     }
 
     public String getTextofTermToSearch() {
         return textFieldSearchTerm.getText();
     }
 
-    void updateHistoryComboBox() throws SQLException {
-        updaterViewHandler.updateHistoryComboBox();
+    void updateHistoryComboBox() {
+        viewUpdaterHandler.updateHistoryComboBox();
     }
 
-    public void updateStoredComboBox() throws SQLException {
-        updaterViewHandler.updateStoredComboBox();
+    public void updateStoredComboBox() {
+        viewUpdaterHandler.updateStoredComboBox();
     }
 
     void updateStoredExtract() {
-        updaterViewHandler.updateStoredExtract();
+        viewUpdaterHandler.updateStoredExtract();
     }
 
-    public ControllerVideoGameWiki getControllerVideoGameWiki() {
+    public ControllerVideoGameWikiInterface getControllerVideoGameWiki() {
         return controllerVideoGameWiki;
     }
 
@@ -62,7 +57,8 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
         return modelVideoGameWiki;
     }
 
-    public PopUPHandler getPopUpHandler() {
-        return popUpHandler;
+    public ViewPopUPHandler getPopUpHandler() {
+        return viewPopUpHandler;
     }
+
 }

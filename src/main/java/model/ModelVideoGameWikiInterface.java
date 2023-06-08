@@ -1,19 +1,22 @@
 package model;
 
-import com.google.gson.JsonArray;
+import utils.ApiHandler;
+import utils.ResultInPlainText;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
+
+import java.util.List;
 
 public interface ModelVideoGameWikiInterface {
     void addCommonListener(ModelVideoGameWikiListener listener);
 
     void addExceptionListener(ModelVideoGameWikiExceptionListener listener);
 
-    String getLastSearchResult();
+    ResultInPlainText getLastSearchResult();
 
-    JsonArray getParcialResults();
+    List<ResultInPlainText> getParcialResults();
 
-    void setParcialResults(JsonArray parcialResults);
+    void setParcialResults(List<ResultInPlainText> parcialResults);
 
     String getStoredResultExtract();
 
@@ -51,7 +54,25 @@ public interface ModelVideoGameWikiInterface {
 
     void setSelectedResult(String selectedResult);
 
-    WikipediaPageAPI getWikipediaPageAPI();
+    ApiHandler getApiHandler();
 
-    void setWikipediaPageAPI(WikipediaPageAPI wikipediaPageAPI);
+    void setApiHandler(ApiHandler apiHandler);
+
+    Object[] getTitles();
+
+    Object[] getHistory();
+
+    void searchTitlesFromSavedResults();
+
+    void searchElementsFromHistory();
+
+    public String getLastTitleSavedOnHistory();
+
+    public void setLastTitleSavedOnHistory(String lastTitleSavedOnHistory);
+
+    public String getLastSearchTermSavedOnHistory();
+
+    public void setLastSearchTermSavedOnHistory(String lastSearchTermSavedOnHistory);
+
+    void setSelectedResultInPlainText(ResultInPlainText resultInPlainText);
 }

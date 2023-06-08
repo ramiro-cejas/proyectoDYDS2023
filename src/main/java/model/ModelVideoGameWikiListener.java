@@ -15,4 +15,8 @@ public interface ModelVideoGameWikiListener {
     void updateHasFinished();
 
     void historySaveHasFinished();
+
+    void searchTitlesFromSavedResultHasFinished();
+
+    void searchFromHistoryHasFinished();
 }

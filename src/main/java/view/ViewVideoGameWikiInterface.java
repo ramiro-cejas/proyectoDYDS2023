@@ -22,5 +22,7 @@ public interface ViewVideoGameWikiInterface {
 
     void pressSearchButton();
 
-    PopUPHandler getPopUPHandler();
+    ViewPopUPHandler getPopUPHandler();
+    ViewVideoGameWikiLogic getViewLogic();
+
 }

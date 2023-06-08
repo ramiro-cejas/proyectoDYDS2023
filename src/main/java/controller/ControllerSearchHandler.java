@@ -3,9 +3,9 @@ package controller;
 import utils.SearchResult;
 
 public class ControllerSearchHandler {
-    private final ControllerVideoGameWiki controllerVideoGameWiki;
+    private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerSearchHandler(ControllerVideoGameWiki controllerVideoGameWiki) {
+    public ControllerSearchHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 

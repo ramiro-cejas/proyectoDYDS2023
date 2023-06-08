@@ -2,10 +2,10 @@ package view;
 
 import javax.swing.*;
 
-public class PopUPHandler {
+public class ViewPopUPHandler {
     private final JPanel parentComponent;
 
-    public PopUPHandler(JPanel parentComponent) {
+    public ViewPopUPHandler(JPanel parentComponent) {
         this.parentComponent = parentComponent;
     }
 

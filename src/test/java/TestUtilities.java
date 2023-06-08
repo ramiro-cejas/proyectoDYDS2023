@@ -6,10 +6,9 @@ import retrofit2.Response;
 import utils.WikipediaPageAPI;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class TestUtilities {
     public TestUtilities() {
@@ -25,7 +24,7 @@ public class TestUtilities {
         return toReturn;
     }
 
-    ArrayList<ResultInStrings> convertResultFromApiToSearchResult(JsonArray responseFromApi) {
+    List<ResultInStrings> convertResultFromApiToSearchResult(JsonArray responseFromApi) {
         ArrayList<ResultInStrings> toReturn = new ArrayList<>();
         for (JsonElement je : responseFromApi) {
             JsonObject searchResult = je.getAsJsonObject();
@@ -58,5 +57,20 @@ public class TestUtilities {
             toReturn = title +"\n"+extract;
         }
         return toReturn;
+    }
+
+    public static String cleanAllHTMLTags(String textToClean){
+        String pattern = "<.*?>";
+        Pattern compiledPattern = Pattern.compile(pattern);
+        Matcher matcher = compiledPattern.matcher(textToClean);
+        return matcher.replaceAll("").replace("&quot;","\"");
+    }
+
+    public static String removeLineBreaks(String text) {
+        return text.replaceAll("\\r?\\n", "").replace(". ",".");
+    }
+
+    public static String removeBlankSpaces(String text){
+        return text.replaceAll("    ", "").strip();
     }
 }
