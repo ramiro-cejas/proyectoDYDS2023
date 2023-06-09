@@ -1,4 +1,4 @@
-package utils;
+package utils.APIHandler;
 
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
@@ -6,6 +6,8 @@ import com.google.gson.JsonObject;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import utils.ResultInPlainText;
+import utils.WikipediaPageAPI;
 
 import java.io.IOException;
 import java.util.ArrayList;

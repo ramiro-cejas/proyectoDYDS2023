@@ -1,6 +1,5 @@
 package view;
 
-import utils.TextTools;
 import utils.ResultInPlainText;
 import utils.SearchResult;
 

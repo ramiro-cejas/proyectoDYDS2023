@@ -1,6 +1,6 @@
 package model;
 
-import utils.ApiHandler;
+import utils.APIHandler.ApiHandler;
 import utils.DataBase;
 import utils.ResultInPlainText;
 import utils.SearchResult;

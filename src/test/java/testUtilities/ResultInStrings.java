@@ -1,3 +1,5 @@
+package testUtilities;
+
 public class ResultInStrings implements Comparable<ResultInStrings>{
     private final String title;
     private final String pageID;

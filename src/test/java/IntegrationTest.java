@@ -4,9 +4,10 @@ import model.ModelVideoGameWiki;
 import model.ModelVideoGameWikiInterface;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import utils.ApiHandler;
+import testUtilities.TestUtilities;
+import testUtilities.ViewClassExtensionToTest;
+import utils.APIHandler.ApiHandler;
 import utils.ResultInPlainText;
-import view.ViewVideoGameWikiInterface;
 
 import java.io.IOException;
 import java.util.List;
@@ -19,67 +20,67 @@ import static org.mockito.Mockito.when;
 public class IntegrationTest {
 
     private ModelVideoGameWikiInterface modelToTest;
-    private ViewVideoGameWikiInterface viewToTest;
-    private ControllerVideoGameWikiInterface controllerToTest;
+    private ViewClassExtensionToTest viewToTest;
     private ApiHandler apiHandlerMockedForTest;
+
     @BeforeEach
     public void initElementsToTest() throws IOException {
         modelToTest = new ModelVideoGameWiki();
-        controllerToTest = new ControllerVideoGameWiki(modelToTest);
-        viewToTest = new ViewClassExtensionToTest(controllerToTest,modelToTest);
+        ControllerVideoGameWikiInterface controllerToTest = new ControllerVideoGameWiki(modelToTest);
+        viewToTest = new ViewClassExtensionToTest(controllerToTest, modelToTest);
         apiHandlerMockedForTest = mock(ApiHandler.class);
         mockSearchByIDInApiHandler(apiHandlerMockedForTest);
     }
 
     private void mockSearchByIDInApiHandler(ApiHandler apiHandlerMocked) throws IOException {
-        when(apiHandlerMocked.getExtractByPageID("0")).thenReturn(new ResultInPlainText("Title Expected","0","Snippet Expected","Extract Expected"));
+        when(apiHandlerMocked.getExtractByPageID("0")).thenReturn(new ResultInPlainText("Title Expected", "0", "Snippet Expected", "Extract Expected"));
         modelToTest.setApiHandler(apiHandlerMocked);
     }
 
     private void mockSearchByTermInApiHandler(ApiHandler apiHandlerMocked, String termToMock) throws IOException {
         when(apiHandlerMocked.searchForTerm(termToMock)).thenReturn(
-                List.of(new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock),new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock),new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock))
+                List.of(new ResultInPlainText("Title: " + termToMock, "0", "Snippet: " + termToMock, "Extract: " + termToMock), new ResultInPlainText("Title: " + termToMock, "0", "Snippet: " + termToMock, "Extract: " + termToMock), new ResultInPlainText("Title: " + termToMock, "0", "Snippet: " + termToMock, "Extract: " + termToMock))
         );
         modelToTest.setApiHandler(apiHandlerMocked);
     }
 
     @Test
-    public void testBusquedaIDValido(){
+    public void testSearchWithValidID() {
         String idToSearch = "0";
 
         String expected = TestUtilities.cleanAllHTMLTags("Extract Expected");
-        String obtained = TestUtilities.cleanAllHTMLTags(((ViewClassExtensionToTest)viewToTest).searchByIDForTesting(idToSearch).extract);
+        String obtained = TestUtilities.cleanAllHTMLTags((viewToTest).searchByIDForTesting(idToSearch).extract);
 
         assertEquals(expected, obtained);
     }
 
     @Test
-    public void testBusquedaIDInvalido() {
+    public void testSearchWithInvalidID() {
         String idToSearch = "2";
 
         String expected = ("searchByIDExceptionHasOcurred");
-        String obtained = (((ViewClassExtensionToTest)viewToTest).searchByIDForTesting(idToSearch).extract);
+        String obtained = ((viewToTest).searchByIDForTesting(idToSearch).extract);
 
         assertEquals(expected, obtained);
     }
 
     @Test
-    public void testBusquedaIDVacio(){
+    public void testSearchWithEmptyID() {
         String idToSearch = "";
 
         String expected = ("searchByIDExceptionHasOcurred");
-        String obtained = (((ViewClassExtensionToTest)viewToTest).searchByIDForTesting(idToSearch).extract);
+        String obtained = ((viewToTest).searchByIDForTesting(idToSearch).extract);
 
         assertEquals(expected, obtained);
     }
 
     @Test
-    public void testBusquedaParcialValido() throws IOException {
+    public void testPartialSearchWithValidTerm() throws IOException {
         String termToSearch = "League of legends";
         mockSearchByTermInApiHandler(apiHandlerMockedForTest, termToSearch);
 
         String expected = "Title: " + termToSearch;
-        List<ResultInPlainText> obtainedListOfResults = (((ViewClassExtensionToTest)viewToTest).pressSearchButtonWithGivenTermToSearch(termToSearch));
+        List<ResultInPlainText> obtainedListOfResults = ((viewToTest).pressSearchButtonWithGivenTermToSearch(termToSearch));
 
         for (ResultInPlainText obtained : obtainedListOfResults) {
             assertEquals(expected, obtained.title);
@@ -87,10 +88,10 @@ public class IntegrationTest {
     }
 
     @Test
-    public void testBusquedaParcialInvalido() {
+    public void testPartialSearchWithInvalidTerm() {
         String termToSearch = "League of legends";
 
-        List<ResultInPlainText> obtainedListOfResults = (((ViewClassExtensionToTest)viewToTest).pressSearchButtonWithGivenTermToSearch(termToSearch));
+        List<ResultInPlainText> obtainedListOfResults = ((viewToTest).pressSearchButtonWithGivenTermToSearch(termToSearch));
 
         for (ResultInPlainText ignored : obtainedListOfResults) {
             fail();
@@ -101,12 +102,24 @@ public class IntegrationTest {
     public void testSaveLastSearchedResult() {
         String idToSearch = "0";
 
-        ((ViewClassExtensionToTest)viewToTest).searchByIDForTesting(idToSearch);
-        ((ViewClassExtensionToTest)viewToTest).saveLastSearchedExtractForTesting();
-        String obtained = ((ViewClassExtensionToTest)viewToTest).getLastSavedExtractSearchedInTheComboBoxStored();
+        (viewToTest).searchByIDForTesting(idToSearch);
+        (viewToTest).saveLastSearchedExtractForTesting();
+        String obtained = (viewToTest).getLastSavedExtractSearchedInTheComboBoxStored();
         String expected = "Extract Expected";
 
-        assertEquals(expected,TestUtilities.cleanAllFormatToPlainText(obtained));
+        assertEquals(expected, TestUtilities.cleanAllFormatToPlainText(obtained));
+    }
+
+    @Test
+    public void testLastSearchIsSavedInHistory() {
+        String idToSearch = "0";
+
+        (viewToTest).searchByIDForTesting(idToSearch);
+        (viewToTest).saveLastSearchedExtractForTesting();
+        String obtained = (viewToTest).getLastSavedExtractSearchedInTheComboBoxStored();
+        String expected = "Extract Expected";
+
+        assertEquals(expected, TestUtilities.cleanAllFormatToPlainText(obtained));
     }
 
 }

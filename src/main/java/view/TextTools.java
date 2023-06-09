@@ -1,4 +1,6 @@
-package utils;
+package view;
+
+import utils.ResultInPlainText;
 
 public class TextTools {
     public static String doHTMLFromResultInPlainText(ResultInPlainText resultInPlainText){

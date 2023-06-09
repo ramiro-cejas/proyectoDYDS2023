@@ -1,6 +1,7 @@
 package model;
 
 import utils.*;
+import utils.APIHandler.ApiHandler;
 
 import java.sql.SQLException;
 import java.util.List;

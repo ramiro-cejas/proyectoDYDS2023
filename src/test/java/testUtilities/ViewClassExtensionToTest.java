@@ -1,3 +1,5 @@
+package testUtilities;
+
 import controller.ControllerVideoGameWikiInterface;
 import model.ModelVideoGameWikiExceptionListener;
 import model.ModelVideoGameWikiInterface;
