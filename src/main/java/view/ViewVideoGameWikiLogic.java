@@ -6,10 +6,9 @@ import model.ModelVideoGameWikiInterface;
 public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
     private final ModelVideoGameWikiInterface modelVideoGameWiki;
     private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
-    private final ViewUpdaterHandler viewUpdaterHandler = new ViewUpdaterHandler(this);
-    private final ViewShowerHandler viewShowerHandler = new ViewShowerHandler(this);
+    final ViewUpdaterHandler viewUpdaterHandler = new ViewUpdaterHandler(this);
+    final ViewShowerHandler viewShowerHandler = new ViewShowerHandler(this);
     private ViewPopUPHandler viewPopUpHandler;
-    private String idToSearch = "";
 
     public ViewVideoGameWikiLogic(ControllerVideoGameWikiInterface controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
         this.controllerVideoGameWiki = controllerVideoGame;
@@ -25,28 +24,8 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
         modelVideoGameWiki.searchElementsFromHistory();
     }
 
-    void showResult() {
-        viewShowerHandler.showResult();
-    }
-
-    void showPartialResults() {
-        viewShowerHandler.showPartialResults();
-    }
-
     public String getTextofTermToSearch() {
         return textFieldSearchTerm.getText();
-    }
-
-    void updateHistoryComboBox() {
-        viewUpdaterHandler.updateHistoryComboBox();
-    }
-
-    public void updateStoredComboBox() {
-        viewUpdaterHandler.updateStoredComboBox();
-    }
-
-    void updateStoredExtract() {
-        viewUpdaterHandler.updateStoredExtract();
     }
 
     public ControllerVideoGameWikiInterface getControllerVideoGameWiki() {
@@ -59,6 +38,10 @@ public class ViewVideoGameWikiLogic extends ViewVideoGameWikiVisual {
 
     public ViewPopUPHandler getPopUpHandler() {
         return viewPopUpHandler;
+    }
+
+    public void setPopUpHandler(ViewPopUPHandler viewPopUpHandler) {
+        this.viewPopUpHandler = viewPopUpHandler;
     }
 
 }

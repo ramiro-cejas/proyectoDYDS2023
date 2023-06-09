@@ -14,7 +14,6 @@ import java.util.List;
 public class ApiHandler {
     private WikipediaPageAPI wikiApi;
 
-
     public ApiHandler() {
         Retrofit retrofit = new Retrofit.Builder()
                 .baseUrl("https://en.wikipedia.org/w/")
@@ -34,23 +33,36 @@ public class ApiHandler {
         for (JsonElement jsonElementOfPartialResult : resultsAsJsonArray) {
             JsonObject jsonObjectOfPartialResult = jsonElementOfPartialResult.getAsJsonObject();
             ResultInPlainText resultInPlainText = getResultInPlainText(jsonObjectOfPartialResult);
-
-            System.out.println(resultInPlainText);
             toReturn.add(resultInPlainText);
         }
-        return null;
+        return toReturn;
     }
 
     public ResultInPlainText getExtractByPageID(String pageId) throws IOException {
         Response<String> callForPageResponse = wikiApi.getExtractByPageID(pageId).execute();
-        return processResponseByID(callForPageResponse);
+        ResultInPlainText toReturn = processResponseByID(callForPageResponse);
+        toReturn.pageID = pageId;
+        return toReturn;
     }
 
     private static ResultInPlainText getResultInPlainText(JsonObject jsonObject) {
-        String searchResultTitle = jsonObject.get("title").getAsString();
-        String searchResultPageId = jsonObject.get("pageid").getAsString();
-        String searchResultSnippet = jsonObject.get("snippet").getAsString();
-        String searchResultExtract = jsonObject.get("extract").getAsString();
+        String searchResultTitle = "";
+        String searchResultPageId = "";
+        String searchResultSnippet = "";
+        String searchResultExtract = "";
+
+        if (jsonObject.get("title") != null){
+            searchResultTitle = jsonObject.get("title").getAsString();
+        }
+        if (jsonObject.get("pageid") != null){
+            searchResultPageId = jsonObject.get("pageid").getAsString();
+        }
+        if (jsonObject.get("snippet") != null){
+            searchResultSnippet = jsonObject.get("snippet").getAsString();
+        }
+        if (jsonObject.get("extract") != null){
+            searchResultExtract = jsonObject.get("extract").getAsString();
+        }
 
         return new ResultInPlainText(searchResultTitle, searchResultPageId, searchResultSnippet, searchResultExtract);
     }

@@ -3,7 +3,6 @@ package controller;
 import model.ModelVideoGameWikiInterface;
 import utils.SearchResult;
 import view.ViewVideoGameWikiInterface;
-import view.ViewVideoGameWikiLogic;
 
 public interface ControllerVideoGameWikiInterface {
 
@@ -26,4 +25,8 @@ public interface ControllerVideoGameWikiInterface {
     ModelVideoGameWikiInterface getModelVideoGameWiki();
 
     void setView(ViewVideoGameWikiInterface viewVideoGameWikiLogic);
+
+    void searchTitlesFromSavedResults();
+
+    void searchElementsFromHistory();
 }

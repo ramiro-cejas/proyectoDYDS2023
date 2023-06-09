@@ -7,11 +7,11 @@ import java.sql.SQLException;
 public class ControllerSelectHandler {
     private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerSelectHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
+    ControllerSelectHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 
-    public void onEventSelectStored(String titleStored) {
+    void onEventSelectStored(String titleStored) {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().searchStoredResult(titleStored);
@@ -20,7 +20,7 @@ public class ControllerSelectHandler {
         thread.start();
     }
 
-    public void onEventSelectHistory(String elementOfHistoryComboBox) {
+    void onEventSelectHistory(String elementOfHistoryComboBox) {
         String[] arrayOfSplitedString = elementOfHistoryComboBox.split("\\.");
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();

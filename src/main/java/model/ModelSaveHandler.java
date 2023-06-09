@@ -5,9 +5,9 @@ import utils.DataBase;
 import java.sql.SQLException;
 
 public class ModelSaveHandler {
-    private final ModelVideoGameWikiInterface modelVideoGameWiki;
+    private final ModelVideoGameWiki modelVideoGameWiki;
 
-    ModelSaveHandler(ModelVideoGameWikiInterface modelVideoGameWiki) {
+    ModelSaveHandler(ModelVideoGameWiki modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
     }
 
@@ -24,8 +24,11 @@ public class ModelSaveHandler {
 
     void saveSearchedResult(String resultBody) {
         try {
-            DataBase.saveInfo(modelVideoGameWiki.getSelectedResultTitle(), resultBody);
-            modelVideoGameWiki.getModelNotifier().notifySaveSearchedResultFinish();
+            if (modelVideoGameWiki.getLastSearchResult() != null){
+                DataBase.saveInfo(modelVideoGameWiki.getSelectedResultTitle(), resultBody);
+                modelVideoGameWiki.getModelNotifier().notifySaveSearchedResultFinish();
+            }
+
         } catch (SQLException e) {
             modelVideoGameWiki.getModelNotifier().notifyExceptionSQL();
         }

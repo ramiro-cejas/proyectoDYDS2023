@@ -5,11 +5,11 @@ import utils.SearchResult;
 public class ControllerSearchHandler {
     private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerSearchHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
+    ControllerSearchHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 
-    public void onEventSearch() {
+    void onEventSearch() {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().searchTerm(controllerVideoGameWiki.getViewVideoGameWiki().getTextofTermToSearch());
@@ -18,7 +18,7 @@ public class ControllerSearchHandler {
         thread.start();
     }
 
-    public void onEventSearchSelectedResult(SearchResult sr, String searchTerm) {
+    void onEventSearchSelectedResult(SearchResult sr, String searchTerm) {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().searchSelectedTerm(sr, searchTerm);

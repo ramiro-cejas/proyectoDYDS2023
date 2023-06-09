@@ -3,7 +3,6 @@ package model;
 import utils.ApiHandler;
 import utils.ResultInPlainText;
 import utils.SearchResult;
-import utils.WikipediaPageAPI;
 
 import java.util.List;
 
@@ -36,23 +35,7 @@ public interface ModelVideoGameWikiInterface {
 
     void saveSearchedResult(String resultBody);
 
-    ModelSaveHandler getModelSaveHandler();
-
-    ModelSearchHandler getModelSearchHandler();
-
-    ModelNotifierHandler getModelNotifier();
-
     String getSelectedResultTitle();
-
-    void setSelectedResultTitle(String selectedResultTitleRaw);
-
-    void setSelectedResultExctract(String selectedExctractRaw);
-
-    String getSelectedResultExtract();
-
-    String getSelectedResult();
-
-    void setSelectedResult(String selectedResult);
 
     ApiHandler getApiHandler();
 
@@ -68,11 +51,6 @@ public interface ModelVideoGameWikiInterface {
 
     public String getLastTitleSavedOnHistory();
 
-    public void setLastTitleSavedOnHistory(String lastTitleSavedOnHistory);
-
     public String getLastSearchTermSavedOnHistory();
 
-    public void setLastSearchTermSavedOnHistory(String lastSearchTermSavedOnHistory);
-
-    void setSelectedResultInPlainText(ResultInPlainText resultInPlainText);
 }

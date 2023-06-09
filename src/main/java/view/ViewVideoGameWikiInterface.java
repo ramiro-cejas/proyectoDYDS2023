@@ -4,25 +4,13 @@ public interface ViewVideoGameWikiInterface {
 
     void start();
 
-    void setWorkingStatus();
+    String getTextofTermToSearch();
+
+    ViewPopUPHandler getPopUPHandler();
+
+    ViewVideoGameWikiLogic getViewLogic();
 
     void setWaitingStatus();
 
-    String getTextofTermToSearch();
-
-    String getResultOfSearch();
-
-    String getSelectedSavedItem();
-
-    String getSelectedHistoryItem();
-
-    void setSelectedHistoryItem(String item);
-
-    void setSelectedStoredItem(String item);
-
-    void pressSearchButton();
-
-    ViewPopUPHandler getPopUPHandler();
-    ViewVideoGameWikiLogic getViewLogic();
-
+    void setWorkingStatus();
 }

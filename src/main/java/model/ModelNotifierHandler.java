@@ -6,86 +6,86 @@ public class ModelNotifierHandler {
     private final ArrayList<ModelVideoGameWikiListener> commonListeners;
     private final ArrayList<ModelVideoGameWikiExceptionListener> exceptionListeners;
 
-    public ModelNotifierHandler() {
+    ModelNotifierHandler() {
         commonListeners = new ArrayList<>();
         exceptionListeners = new ArrayList<>();
     }
 
-    public void notifyParcialSearchHasFinished() {
+    void notifyParcialSearchHasFinished() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.partialSearchHasFinished();
         }
     }
 
-    public void notifyQueryHasFinished() {
+    void notifyQueryHasFinished() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.queryHasFinished();
         }
     }
 
-    public void notifyUpdateStoredFinish() {
+    void notifyUpdateStoredFinish() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.updateHasFinished();
         }
     }
 
-    public void notifySearchForStoredFinish() {
+    void notifySearchForStoredFinish() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.searchForStoredFinished();
         }
     }
 
-    public void notifyDeleteStoredFinish() {
+    void notifyDeleteStoredFinish() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.deleteFinished();
         }
     }
 
-    public void notifySaveSearchedResultFinish() {
+    void notifySaveSearchedResultFinish() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.saveHasFinished();
         }
     }
 
-    public void addCommonListener(ModelVideoGameWikiListener listener) {
+    void addCommonListener(ModelVideoGameWikiListener listener) {
         commonListeners.add(listener);
     }
 
-    public void addExceptionListener(ModelVideoGameWikiExceptionListener listener) {
+    void addExceptionListener(ModelVideoGameWikiExceptionListener listener) {
         exceptionListeners.add(listener);
     }
 
-    public void notifyHistorySaveFinished() {
+    void notifyHistorySaveFinished() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.historySaveHasFinished();
         }
     }
 
-    public void notifyExceptionSearchTerm() {
+    void notifyExceptionSearchTerm() {
         for (ModelVideoGameWikiExceptionListener listener : exceptionListeners) {
             listener.searchTermExceptionHasOcurred();
         }
     }
 
-    public void notifyExceptionSearchByID() {
+    void notifyExceptionSearchByID() {
         for (ModelVideoGameWikiExceptionListener listener : exceptionListeners) {
             listener.searchByIDExceptionHasOcurred();
         }
     }
 
-    public void notifyExceptionSQL() {
+    void notifyExceptionSQL() {
         for (ModelVideoGameWikiExceptionListener listener : exceptionListeners) {
             listener.sqlExceptionHasOcurred();
         }
     }
 
-    public void notifySearchTitlesFromSavedResultsHasFinished() {
+    void notifySearchTitlesFromSavedResultsHasFinished() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.searchTitlesFromSavedResultHasFinished();
         }
     }
 
-    public void notifySearchFromHistoryHasFinished() {
+    void notifySearchFromHistoryHasFinished() {
         for (ModelVideoGameWikiListener listener : commonListeners) {
             listener.searchFromHistoryHasFinished();
         }

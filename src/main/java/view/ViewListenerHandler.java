@@ -20,7 +20,9 @@ public class ViewListenerHandler {
             viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventSaveSearched(viewVideoGameWikiLogic.getTextPaneResult().getText());
         });
         viewVideoGameWikiLogic.getComboBoxStored().addActionListener(actionEvent -> {
-            viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventSelectStored(Objects.requireNonNull(viewVideoGameWikiLogic.getComboBoxStored().getSelectedItem()).toString());
+            if (viewVideoGameWikiLogic.getComboBoxStored().getSelectedItem() != null) {
+                viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventSelectStored(Objects.requireNonNull(viewVideoGameWikiLogic.getComboBoxStored().getSelectedItem()).toString());
+            }
         });
         viewVideoGameWikiLogic.getDeleteItem().addActionListener(actionEvent -> {
             viewVideoGameWikiLogic.getControllerVideoGameWiki().onEventDeleteStoredResult(Objects.requireNonNull(viewVideoGameWikiLogic.getComboBoxStored().getSelectedItem()).toString());
@@ -34,31 +36,32 @@ public class ViewListenerHandler {
         viewVideoGameWikiLogic.getModelVideoGameWiki().addCommonListener(new ModelVideoGameWikiListener() {
             @Override
             public void partialSearchHasFinished() {
-                viewVideoGameWikiLogic.showPartialResults();
+                viewVideoGameWikiLogic.viewShowerHandler.showPartialResults();
             }
 
             @Override
             public void queryHasFinished() {
-                viewVideoGameWikiLogic.showResult();
-                viewVideoGameWikiLogic.getModelVideoGameWiki().searchElementsFromHistory();
+                viewVideoGameWikiLogic.viewShowerHandler.showResult();
+                viewVideoGameWikiLogic.getControllerVideoGameWiki().searchElementsFromHistory();
             }
 
             @Override
             public void saveHasFinished() {
                 viewVideoGameWikiLogic.getTextPaneStored().setText("");
                 viewVideoGameWikiLogic.getPopUpHandler().showSavedFinished();
-                viewVideoGameWikiLogic.getModelVideoGameWiki().searchTitlesFromSavedResults();
+                viewVideoGameWikiLogic.getControllerVideoGameWiki().searchTitlesFromSavedResults();
             }
 
             @Override
             public void searchForStoredFinished() {
-                viewVideoGameWikiLogic.updateStoredExtract();
+                viewVideoGameWikiLogic.viewUpdaterHandler.updateStoredExtract();
             }
 
             @Override
             public void deleteFinished() {
-                viewVideoGameWikiLogic.getModelVideoGameWiki().searchTitlesFromSavedResults();
+                viewVideoGameWikiLogic.getControllerVideoGameWiki().searchTitlesFromSavedResults();
                 viewVideoGameWikiLogic.getTextPaneStored().setText("");
+                viewVideoGameWikiLogic.getComboBoxStored().setSelectedItem(null);
                 viewVideoGameWikiLogic.getPopUpHandler().showDeleteFinished();
             }
 
@@ -69,17 +72,17 @@ public class ViewListenerHandler {
 
             @Override
             public void historySaveHasFinished() {
-                viewVideoGameWikiLogic.getModelVideoGameWiki().searchElementsFromHistory();
+                viewVideoGameWikiLogic.getControllerVideoGameWiki().searchElementsFromHistory();
             }
 
             @Override
             public void searchTitlesFromSavedResultHasFinished() {
-                viewVideoGameWikiLogic.updateStoredComboBox();
+                viewVideoGameWikiLogic.viewUpdaterHandler.updateStoredComboBox();
             }
 
             @Override
             public void searchFromHistoryHasFinished() {
-                viewVideoGameWikiLogic.updateHistoryComboBox();
+                viewVideoGameWikiLogic.viewUpdaterHandler.updateHistoryComboBox();
             }
         });
         viewVideoGameWikiLogic.getModelVideoGameWiki().addExceptionListener(new ModelVideoGameWikiExceptionListener() {

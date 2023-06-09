@@ -3,11 +3,11 @@ package controller;
 public class ControllerStoredHandler {
     private final ControllerVideoGameWikiInterface controllerVideoGameWiki;
 
-    public ControllerStoredHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
+    ControllerStoredHandler(ControllerVideoGameWikiInterface controllerVideoGameWiki) {
         this.controllerVideoGameWiki = controllerVideoGameWiki;
     }
 
-    public void onEventDeleteStoredResult(String titleStored) {
+    void onEventDeleteStoredResult(String titleStored) {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().deleteStoredResult(titleStored);
@@ -16,7 +16,7 @@ public class ControllerStoredHandler {
         thread.start();
     }
 
-    public void onEventUpdateStoredResult(String titleToUpdate, String bodyToUpdate) {
+    void onEventUpdateStoredResult(String titleToUpdate, String bodyToUpdate) {
         Thread thread = (new Thread(() -> {
             controllerVideoGameWiki.getViewVideoGameWiki().setWorkingStatus();
             controllerVideoGameWiki.getModelVideoGameWiki().updateStoredResult(titleToUpdate, bodyToUpdate);

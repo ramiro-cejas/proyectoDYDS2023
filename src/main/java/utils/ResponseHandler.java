@@ -3,19 +3,12 @@ package utils;
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import model.ModelSearchHandler;
-import model.TextHandler;
 import retrofit2.Response;
 
 import java.util.Map;
 import java.util.Set;
 
 public class ResponseHandler {
-    private final ModelSearchHandler modelSearchHandler;
-
-    public ResponseHandler(ModelSearchHandler modelSearchHandler) {
-        this.modelSearchHandler = modelSearchHandler;
-    }
 
     public static JsonObject transformResponseToJsonObject(JsonObject query) {
         JsonObject pages = query.get("pages").getAsJsonObject();

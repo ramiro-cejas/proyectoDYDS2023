@@ -51,7 +51,7 @@ public class DataBase {
     }
 
     public static void saveInfo(String title, String extract) throws SQLException {
-        excecuteGivenUpdate("replace into catalog values(null, '" + title + "', '" + extract + "', 1)");
+        excecuteGivenUpdate("replace into catalog values(null, '" + title + "', '" + extract.replace("'", "`") + "', 1)");
     }
 
     public static String getExtract(String title) throws SQLException {

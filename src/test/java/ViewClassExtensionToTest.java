@@ -1,21 +1,27 @@
-import com.google.gson.JsonArray;
 import controller.ControllerVideoGameWikiInterface;
+import model.ModelVideoGameWikiExceptionListener;
 import model.ModelVideoGameWikiInterface;
 import model.ModelVideoGameWikiListener;
 import utils.ResultInPlainText;
 import utils.SearchResult;
+import view.ViewPopUPHandler;
 import view.ViewVideoGameWiki;
 
-import javax.xml.transform.Result;
+import java.util.Arrays;
 import java.util.List;
+
+import static org.mockito.Mockito.mock;
 
 public class ViewClassExtensionToTest extends ViewVideoGameWiki {
     public volatile boolean processFinished = false;
+    public String exceptionProduced = "";
     public List<ResultInPlainText> partialSearchResult = null;
-    public String queryResult = null;
+    public ResultInPlainText queryResult = null;
     public String storedInfo = null;
     public ViewClassExtensionToTest(ControllerVideoGameWikiInterface controllerVideoGame, ModelVideoGameWikiInterface modelVideoGame) {
         super(controllerVideoGame, modelVideoGame);
+        ViewPopUPHandler popUPMocked = mock(ViewPopUPHandler.class);
+        getViewLogic().setPopUpHandler(popUPMocked);
         modelVideoGame.addCommonListener(new ModelVideoGameWikiListener() {
             @Override
             public void partialSearchHasFinished() {
@@ -25,7 +31,6 @@ public class ViewClassExtensionToTest extends ViewVideoGameWiki {
 
             @Override
             public void queryHasFinished() {
-                System.out.println("Entre");
                 queryResult = modelVideoGame.getLastSearchResult();
                 processFinished = true;
             }
@@ -66,13 +71,43 @@ public class ViewClassExtensionToTest extends ViewVideoGameWiki {
 
             }
         });
+        modelVideoGame.addExceptionListener(new ModelVideoGameWikiExceptionListener() {
+            @Override
+            public void searchTermExceptionHasOcurred() {
+                exceptionProduced = "searchTermExceptionHasOcurred";
+                processFinished = true;
+            }
+
+            @Override
+            public void searchByIDExceptionHasOcurred() {
+                exceptionProduced = "searchByIDExceptionHasOcurred";
+                processFinished = true;
+            }
+
+            @Override
+            public void sqlExceptionHasOcurred() {
+                exceptionProduced = "sqlExceptionHasOcurred";
+                processFinished = true;
+            }
+        });
     }
 
 
-    public String searchByIDForTesting(String idToSearch){
-        getViewLogic().getControllerVideoGameWiki().onEventSearchSelectedResult(new SearchResult("League of Legends",idToSearch,"League of"),"League of");
+    public ResultInPlainText searchByIDForTesting(String idToSearch){
+        getViewLogic().getControllerVideoGameWiki().onEventSearchSelectedResult(new SearchResult("",idToSearch,""),"");
         waitForProcessFinishForTesting();
-        return queryResult;
+        if (exceptionProduced != "")
+            return new ResultInPlainText("","","",exceptionProduced);
+        else
+            return queryResult;
+    }
+
+    public List<ResultInPlainText> pressSearchButtonWithGivenTermToSearch(String termToSearch) {
+        this.getViewLogic().getTextFieldSearchTerm().setText(termToSearch);
+        Arrays.stream(getViewLogic().getButtonSearch().getActionListeners()).iterator().next().actionPerformed(null);
+        
+        waitForProcessFinishForTesting();
+        return getViewLogic().getModelVideoGameWiki().getParcialResults();
     }
 
     private void waitForProcessFinishForTesting(){

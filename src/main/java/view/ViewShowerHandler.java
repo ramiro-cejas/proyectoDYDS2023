@@ -1,10 +1,6 @@
 package view;
 
-import com.google.gson.JsonArray;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import model.TextHandler;
-import org.w3c.dom.Text;
+import utils.TextTools;
 import utils.ResultInPlainText;
 import utils.SearchResult;
 
@@ -19,7 +15,7 @@ public class ViewShowerHandler {
 
     void showResult() {
         viewVideoGameWikiLogic.getTabbedPane().setSelectedIndex(1);
-        viewVideoGameWikiLogic.getTextPaneResult().setText(TextHandler.doHTMLFromResultInPlainText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult()));
+        viewVideoGameWikiLogic.getTextPaneResult().setText(TextTools.doHTMLFromResultInPlainText(viewVideoGameWikiLogic.getModelVideoGameWiki().getLastSearchResult()));
         viewVideoGameWikiLogic.getTextPaneResult().setCaretPosition(0);
     }
 

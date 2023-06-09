@@ -22,6 +22,16 @@ public class ControllerVideoGameWiki implements ControllerVideoGameWikiInterface
     }
 
     @Override
+    public void searchTitlesFromSavedResults() {
+        modelVideoGameWiki.searchTitlesFromSavedResults();
+    }
+
+    @Override
+    public void searchElementsFromHistory() {
+        modelVideoGameWiki.searchElementsFromHistory();
+    }
+
+    @Override
     public void onEventSearch() {
         controllerSearchHandler.onEventSearch();
     }

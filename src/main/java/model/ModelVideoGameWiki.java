@@ -9,6 +9,7 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private final ModelSaveHandler modelSaveHandler;
     private final ModelSearchHandler modelSearchHandler;
     private final ModelNotifierHandler modelNotifierHandler;
+    private final ModelStoredHandler modelStoredHandler = new ModelStoredHandler(this);
     private String selectedResultTitleRaw = null;
     private String selectedResult = null;
     private String selectedExtractRaw = null;
@@ -17,6 +18,16 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     private Object[] titlesFromSavedResults = null;
     private Object[] elementsFromHistory = null;
     private ResultInPlainText selectedResultInPlainText;
+    String lastTitleSavedOnHistory = null;
+    String lastSearchTermSavedOnHistory = null;
+
+    public ModelVideoGameWiki() {
+        modelNotifierHandler = new ModelNotifierHandler();
+        modelSaveHandler = new ModelSaveHandler(this);
+        modelSearchHandler = new ModelSearchHandler(this);
+        setUpModel();
+    }
+
 
     public String getLastTitleSavedOnHistory() {
         return lastTitleSavedOnHistory;
@@ -34,19 +45,8 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
         this.lastSearchTermSavedOnHistory = lastSearchTermSavedOnHistory;
     }
 
-    @Override
     public void setSelectedResultInPlainText(ResultInPlainText resultInPlainText) {
         this.selectedResultInPlainText = resultInPlainText;
-    }
-
-    String lastTitleSavedOnHistory = null;
-    String lastSearchTermSavedOnHistory = null;
-
-    public ModelVideoGameWiki() {
-        modelNotifierHandler = new ModelNotifierHandler();
-        modelSaveHandler = new ModelSaveHandler(this);
-        modelSearchHandler = new ModelSearchHandler(this);
-        setUpModel();
     }
 
     @Override
@@ -62,15 +62,6 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
     @Override
     public String getSelectedResultTitle() {
         return selectedResultInPlainText.title;
-    }
-
-    @Override
-    public void setSelectedResultTitle(String selectedResultTitle) {
-        this.selectedResultInPlainText.title = selectedResultTitle;
-    }
-
-    public String getSelectedResultExtract() {
-        return selectedResultInPlainText.extract;
     }
 
     @Override
@@ -123,67 +114,22 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     @Override
     public void updateStoredResult(String title, String body) {
-        try {
-            DataBase.saveInfo(title, body);
-        } catch (SQLException e) {
-            modelNotifierHandler.notifyExceptionSQL();
-        }
-        modelNotifierHandler.notifyUpdateStoredFinish();
+        modelStoredHandler.updateStoredResult(title, body);
     }
 
     @Override
     public void deleteStoredResult(String titleStored) {
-        try {
-            DataBase.deleteEntry(titleStored);
-        } catch (SQLException e) {
-            modelNotifierHandler.notifyExceptionSQL();
-        }
-        notifyDeleteStoredFinish();
+        modelStoredHandler.deleteStoredResult(titleStored);
     }
 
     @Override
     public void searchStoredResult(String titleStored) {
-        try {
-            storedResultExtract = DataBase.getExtract(titleStored);
-        } catch (SQLException e) {
-            modelNotifierHandler.notifyExceptionSQL();
-        }
-        modelNotifierHandler.notifySearchForStoredFinish();
+        modelStoredHandler.searchStoredResult(titleStored);
     }
 
     @Override
     public void saveSearchedResult(String resultBody) {
         modelSaveHandler.saveSearchedResult(resultBody);
-    }
-
-    @Override
-    public ModelSaveHandler getModelSaveHandler() {
-        return modelSaveHandler;
-    }
-
-    @Override
-    public ModelSearchHandler getModelSearchHandler() {
-        return modelSearchHandler;
-    }
-
-    @Override
-    public ModelNotifierHandler getModelNotifier() {
-        return modelNotifierHandler;
-    }
-
-    @Override
-    public void setSelectedResultExctract(String selectedExctractRaw) {
-        this.selectedExtractRaw = selectedExctractRaw;
-    }
-
-    @Override
-    public String getSelectedResult() {
-        return selectedResult;
-    }
-
-    @Override
-    public void setSelectedResult(String selectedResult) {
-        this.selectedResult = selectedResult;
     }
 
     @Override
@@ -208,21 +154,35 @@ public class ModelVideoGameWiki implements ModelVideoGameWikiInterface {
 
     @Override
     public void searchTitlesFromSavedResults() {
-        try {
-            titlesFromSavedResults = DataBase.getTitles().toArray();
-            modelNotifierHandler.notifySearchTitlesFromSavedResultsHasFinished();
-        } catch (SQLException e) {
-            modelNotifierHandler.notifyExceptionSQL();
-        }
+        modelStoredHandler.searchTitlesFromSavedResults();
     }
 
     @Override
     public void searchElementsFromHistory() {
-        try {
-            elementsFromHistory = DataBase.getHistory().toArray();
-            modelNotifierHandler.notifySearchFromHistoryHasFinished();
-        } catch (SQLException e) {
-            modelNotifierHandler.notifyExceptionSQL();
-        }
+        modelSearchHandler.searchElementsFromHistory();
+    }
+
+    ModelNotifierHandler getModelNotifierHandler() {
+        return modelNotifierHandler;
+    }
+
+    void setStoredResultExtract(String extract) {
+        this.storedResultExtract = extract;
+    }
+
+    void setTitlesFromSavedResults(Object[] array) {
+        this.titlesFromSavedResults = array;
+    }
+
+    void setElementsFromHistory(Object[] array) {
+        this.elementsFromHistory = array;
+    }
+
+    public ModelNotifierHandler getModelNotifier() {
+        return this.modelNotifierHandler;
+    }
+
+    public ModelSaveHandler getModelSaveHandler() {
+        return this.modelSaveHandler;
     }
 }

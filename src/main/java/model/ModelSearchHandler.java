@@ -1,18 +1,17 @@
 package model;
 
-import retrofit2.Response;
-import retrofit2.Retrofit;
-import retrofit2.converter.scalars.ScalarsConverterFactory;
 import utils.ApiHandler;
+import utils.DataBase;
 import utils.ResultInPlainText;
 import utils.SearchResult;
-import utils.WikipediaPageAPI;
+
+import java.sql.SQLException;
 
 public class ModelSearchHandler {
-    private final ModelVideoGameWikiInterface modelVideoGameWiki;
+    private final ModelVideoGameWiki modelVideoGameWiki;
     private ApiHandler apiHandler;
 
-    ModelSearchHandler(ModelVideoGameWikiInterface modelVideoGameWiki) {
+    ModelSearchHandler(ModelVideoGameWiki modelVideoGameWiki) {
         this.modelVideoGameWiki = modelVideoGameWiki;
         apiHandler = new ApiHandler();
     }
@@ -49,15 +48,20 @@ public class ModelSearchHandler {
         }
     }
 
-    public ApiHandler getApiHandler() {
+    ApiHandler getApiHandler() {
         return apiHandler;
     }
 
-    public void setApiHandler(ApiHandler apiHandler) {
+    void setApiHandler(ApiHandler apiHandler) {
         this.apiHandler = apiHandler;
     }
 
-    public ModelVideoGameWikiInterface getModelVideoGameWiki() {
-        return modelVideoGameWiki;
+    void searchElementsFromHistory() {
+        try {
+            modelVideoGameWiki.setElementsFromHistory(DataBase.getHistory().toArray());
+            modelVideoGameWiki.getModelNotifierHandler().notifySearchFromHistoryHasFinished();
+        } catch (SQLException e) {
+            modelVideoGameWiki.getModelNotifierHandler().notifyExceptionSQL();
+        }
     }
 }
