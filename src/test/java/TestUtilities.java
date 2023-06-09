@@ -73,4 +73,8 @@ public class TestUtilities {
     public static String removeBlankSpaces(String text){
         return text.replaceAll("    ", "").strip();
     }
+
+    public static String cleanAllFormatToPlainText (String textToClean){
+        return removeBlankSpaces(removeLineBreaks(cleanAllHTMLTags(textToClean)));
+    }
 }

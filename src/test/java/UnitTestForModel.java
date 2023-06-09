@@ -5,40 +5,49 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import retrofit2.Retrofit;
 import retrofit2.converter.scalars.ScalarsConverterFactory;
+import utils.ApiHandler;
+import utils.ResultInPlainText;
 import utils.SearchResult;
 import utils.WikipediaPageAPI;
 
+import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.Mockito.when;
 
 public class UnitTestForModel {
 
-    private static WikipediaPageAPI wikiApiTest;
-    private TestUtilities testUtilities = new TestUtilities();
-    private ModelVideoGameWikiInterface modelToTest = new ModelVideoGameWiki();
+    private ApiHandler apiHandlerMockedForTest;
+    private ModelVideoGameWikiInterface modelToTest;
 
-    @BeforeAll
-    public static void initApi() {
-        Retrofit retrofit = new Retrofit.Builder()
-                .baseUrl("https://en.wikipedia.org/w/")
-                .addConverterFactory(ScalarsConverterFactory.create())
-                .build();
-        wikiApiTest = retrofit.create(WikipediaPageAPI.class);
-    }
-    /*
     @BeforeEach
-    public void initModel() {
-        modelToTest.setApiHandler(wikiApiTest);
+    public void initModel() throws IOException {
+        modelToTest = new ModelVideoGameWiki();
+
+        mockSearchByIDInApiHandler(apiHandlerMockedForTest);
+        
+        modelToTest.setApiHandler(apiHandlerMockedForTest);
     }
 
+    private void mockSearchByIDInApiHandler(ApiHandler apiHandlerMocked) throws IOException {
+        when(apiHandlerMocked.getExtractByPageID("0")).thenReturn(new ResultInPlainText("Title Expected","0","Snippet Expected","Extract Expected"));
+        modelToTest.setApiHandler(apiHandlerMocked);
+    }
+
+    private void mockSearchByTermInApiHandler(ApiHandler apiHandlerMocked, String termToMock) throws IOException {
+        when(apiHandlerMocked.searchForTerm(termToMock)).thenReturn(
+                List.of(new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock),new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock),new ResultInPlainText("Title: "+termToMock, "0", "Snippet: "+termToMock, "Extract: "+termToMock))
+        );
+        modelToTest.setApiHandler(apiHandlerMocked);
+    }
     @Test
     public void testBusquedaTerminoValido() throws Exception {
         String termToSearch = "fifa";
         modelToTest.searchTerm(termToSearch);
-        List<ResultInStrings> expected = testUtilities.convertResultFromApiToSearchResult(testUtilities.processResultFromApi(termToSearch, wikiApiTest));
-        List<ResultInStrings> obtained = testUtilities.convertResultFromApiToSearchResult(modelToTest.getParcialResults());
+        List<ResultInStrings> expected = TestUtilities.convertResultFromApiToSearchResult(TestUtilities.processResultFromApi(termToSearch, wikiApiTest));
+        List<ResultInStrings> obtained = TestUtilities.convertResultFromApiToSearchResult(modelToTest.getParcialResults());
         assertEquals(expected.toString(), obtained.toString());
     }
 

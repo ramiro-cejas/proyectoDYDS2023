@@ -10,7 +10,7 @@ public interface ControllerVideoGameWikiInterface {
 
     void onEventSearchSelectedResult(SearchResult sr, String searchTerm);
 
-    void onEventSaveSearched(String resultBody);
+    void onEventSaveSearched(String text);
 
     void onEventSelectStored(String titleStored);
 
